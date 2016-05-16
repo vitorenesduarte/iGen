@@ -28,9 +28,6 @@ import lexer
 RESERVED  = 'RESERVED'
 INT       = 'INT'
 ID        = 'ID'
-PRE       = 'PRE'
-POS       = 'POS'
-INVARIANT = 'INVARIANT'
 
 token_exprs = [
     (r'[ \n\t]+',              None),
