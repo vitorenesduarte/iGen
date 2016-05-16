@@ -40,6 +40,7 @@ if __name__ == '__main__':
     text = open(filename).read()
     tokens = imp_lex(text)
     parse_result = imp_parse(tokens)
+    print parse_result
     if not parse_result:
         sys.stderr.write('Parse error!\n')
         sys.exit(1)

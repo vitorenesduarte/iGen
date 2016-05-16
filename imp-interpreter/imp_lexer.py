@@ -25,9 +25,12 @@
 
 import lexer
 
-RESERVED = 'RESERVED'
-INT      = 'INT'
-ID       = 'ID'
+RESERVED  = 'RESERVED'
+INT       = 'INT'
+ID        = 'ID'
+PRE       = 'PRE'
+POS       = 'POS'
+INVARIANT = 'INVARIANT'
 
 token_exprs = [
     (r'[ \n\t]+',              None),
@@ -55,6 +58,9 @@ token_exprs = [
     (r'while',                 RESERVED),
     (r'do',                    RESERVED),
     (r'end',                   RESERVED),
+    (r'pre',                   RESERVED),
+    (r'pos',                   RESERVED),
+    (r'inv',                   RESERVED),
     (r'[0-9]+',                INT),
     (r'[A-Za-z][A-Za-z0-9_]*', ID),
 ]

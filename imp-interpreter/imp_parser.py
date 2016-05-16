@@ -50,7 +50,10 @@ def stmt_list():
 def stmt():
     return assign_stmt() | \
            if_stmt()     | \
-           while_stmt()
+           while_stmt()  | \
+           pre_stmt()    | \
+           pos_stmt()    | \
+           inv_stmt()
 
 def assign_stmt():
     def process(parsed):
@@ -78,6 +81,24 @@ def while_stmt():
     return keyword('while') + bexp() + \
            keyword('do') + Lazy(stmt_list) + \
            keyword('end') ^ process
+
+def pre_stmt():
+    def process(parsed):
+        ((_, condition), _) = parsed
+        return PreStatement(condition)
+    return keyword('pre') + bexp() + keyword('end') ^ process
+
+def pos_stmt():
+    def process(parsed):
+        ((_, condition), _) = parsed
+        return PosStatement(condition)
+    return keyword('pos') + bexp() + keyword('end') ^ process
+
+def inv_stmt():
+    def process(parsed):
+        ((_, condition), _) = parsed
+        return InvStatement(condition)
+    return keyword('inv') + bexp() + keyword('end') ^ process
 
 # Boolean expressions
 def bexp():

@@ -89,6 +89,25 @@ class WhileStatement(Statement):
             self.body.eval(env)
             condition_value = self.condition.eval(env)
 
+class VCStatement(Statement):
+    def __init__(self, condition):
+        self.condition = condition
+
+    def eval(self, env):
+        return
+
+class PreStatement(VCStatement):
+    def __repr__(self):
+        return 'PreStatement(%s)' % (self.condition)
+
+class PosStatement(VCStatement):
+    def __repr__(self):
+        return 'PosStatement(%s)' % (self.condition)
+
+class InvStatement(VCStatement):
+    def __repr__(self):
+        return 'InvStatement(%s)' % (self.condition)
+
 class IntAexp(Aexp):
     def __init__(self, i):
         self.i = i
