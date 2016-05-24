@@ -58,6 +58,8 @@ token_exprs = [
     (r'pre',                   RESERVED),
     (r'pos',                   RESERVED),
     (r'inv',                   RESERVED),
+    (r'assume',                RESERVED),
+    (r'assert',                RESERVED),
     (r'[0-9]+',                INT),
     (r'[A-Za-z][A-Za-z0-9_]*', ID),
 ]

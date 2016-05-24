@@ -108,6 +108,14 @@ class InvStatement(VCStatement):
     def __repr__(self):
         return 'InvStatement(%s)' % (self.condition)
 
+class AssumeStatement(VCStatement):
+    def __repr__(self):
+        return 'AssumeStatement(%s)' % (self.condition)
+
+class AssertStatement(VCStatement):
+    def __repr__(self):
+        return 'AssertStatement(%s)' % (self.condition)
+
 class IntAexp(Aexp):
     def __init__(self, i):
         self.i = i

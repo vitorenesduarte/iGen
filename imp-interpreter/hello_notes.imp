@@ -4,7 +4,11 @@ p := 1;
 
 while n > 0 do
   inv n >= 0 end;
+  assert n > 0 end;
+  n := n - 1;
   n := n - 1
 end;
+
+assume n = 0 end;
 
 pos n = 0 end

@@ -53,7 +53,9 @@ def stmt():
            while_stmt()  | \
            pre_stmt()    | \
            pos_stmt()    | \
-           inv_stmt()
+           inv_stmt()    | \
+           assume_stmt() | \
+           assert_stmt()
 
 def assign_stmt():
     def process(parsed):
@@ -99,6 +101,18 @@ def inv_stmt():
         ((_, condition), _) = parsed
         return InvStatement(condition)
     return keyword('inv') + bexp() + keyword('end') ^ process
+
+def assume_stmt():
+    def process(parsed):
+        ((_, condition), _) = parsed
+        return AssumeStatement(condition)
+    return keyword('assume') + bexp() + keyword('end') ^ process
+
+def assert_stmt():
+    def process(parsed):
+        ((_, condition), _) = parsed
+        return AssertStatement(condition)
+    return keyword('assert') + bexp() + keyword('end') ^ process
 
 # Boolean expressions
 def bexp():
