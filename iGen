@@ -8,7 +8,7 @@ sys.path.append('imp-interpreter')
 from imp_parser import *
 from imp_lexer import *
 
-from parse_parsed import *
+from i_util import *
 
 def usage():
     sys.stderr.write('Usage: iGen filename\n')
@@ -25,4 +25,10 @@ if __name__ == '__main__':
         sys.stderr.write('Parse error!\n')
         sys.exit(1)
 
-    print parse_parsed(parse_result)
+
+    program = parse_parsed(parse_result)
+    program = to_triple(program)
+    
+    print program
+
+

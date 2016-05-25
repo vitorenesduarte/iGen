@@ -44,3 +44,21 @@ def parse_parsed_r(command, seq):
 
     else:
         return [command] + seq
+
+
+def to_triple(program):
+    pre = PreStatement(True)
+    pos = PosStatement(True)
+    commands = []
+
+    for i in xrange(0, len(program)):
+        command = program[i]
+        if isinstance(command, PreStatement):
+            pre = command
+        elif isinstance(command, PosStatement):
+            pos = command
+        else:
+            commands.append(command)
+
+    return (pre, commands, pos)
+
