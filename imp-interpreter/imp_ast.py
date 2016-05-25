@@ -135,6 +135,14 @@ class OrBexp(Bexp):
         right_value = self.right.eval(env)
         return left_value or right_value
 
+class ImplBexp(Bexp):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+
+    def __repr__(self):
+        return 'ImplBexp(%s, %s)' % (self.left, self.right)
+
 class NotBexp(Bexp):
     def __init__(self, exp):
         self.exp = exp

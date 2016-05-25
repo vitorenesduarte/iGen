@@ -31,6 +31,6 @@ if __name__ == '__main__':
     (pre, commands, pos) = to_triple(program)
 
     try:
-        print wp(commands, pos)
+        print wp(commands, pos.condition)
     except Exception as e:
         print e
