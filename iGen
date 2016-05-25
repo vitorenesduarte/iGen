@@ -9,6 +9,7 @@ from imp_parser import *
 from imp_lexer import *
 
 from i_util import *
+from wp import *
 
 def usage():
     sys.stderr.write('Usage: iGen filename\n')
@@ -27,8 +28,9 @@ if __name__ == '__main__':
 
 
     program = parse_parsed(parse_result)
-    program = to_triple(program)
-    
-    print program
+    (pre, commands, pos) = to_triple(program)
 
-
+    try:
+        print wp(commands, pos)
+    except Exception as e:
+        print e

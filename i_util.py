@@ -3,7 +3,6 @@ import sys
 # Add imp-interpreter folder to sys.path
 sys.path.append('imp-interpreter')
 
-# Import what's need from there
 from imp_ast import *
 from combinators import *
 
@@ -38,17 +37,21 @@ def parse_parsed_r(command, seq):
         body = command.body
 
         bodyParsed = parse_parsed(body)
-        newWhile = WhileStatement(condition, bodyParsed)
+        (bodyParsed, invariant) = extract_while_invariant(bodyParsed)
+        newWhile = WhileStatement(condition, bodyParsed, invariant)
 
         return [newWhile] + seq
 
     else:
         return [command] + seq
 
+def truth():
+    # TODO change this to true
+    return RelopBexp('=', IntAexp(0), IntAexp(0))
 
 def to_triple(program):
-    pre = PreStatement(True)
-    pos = PosStatement(True)
+    pre = PreStatement(truth())
+    pos = PosStatement(truth())
     commands = []
 
     for i in xrange(0, len(program)):
@@ -61,4 +64,14 @@ def to_triple(program):
             commands.append(command)
 
     return (pre, commands, pos)
+
+def extract_while_invariant(body):
+    inv = InvStatement(truth())
+    for i in xrange(0, len(body)):
+        command = body[i]
+        if isinstance(command, InvStatement):
+            body.pop(i)
+            return (body, command)
+
+    return (body, inv)
 
