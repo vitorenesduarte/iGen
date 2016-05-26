@@ -20,7 +20,7 @@ class TestExtractWhileInvariant(unittest.TestCase):
         self.program_test(code, expected)
 
     def test_extract_simple(self):
-        code = 'while x <= y do inv x = y end; x := 1 end'
+        code = 'while x <= y do inv x = y + 1 end; x := 1 end'
         expected = RelopBexp('=', VarAexp('x'), VarAexp('y'))
         self.program_test(code, expected)
 
