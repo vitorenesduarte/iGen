@@ -10,3 +10,12 @@ $ cd build
 $ make
 ```
 
+Example:
+```bash
+$ iGen examples/hello_notes.imp
+```
+
+Run Tests:
+```bash
+$ bash tests.sh
+```
