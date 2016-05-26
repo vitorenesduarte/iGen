@@ -6,6 +6,32 @@ from imp_lexer import *
 
 from i_util import *
 
+class TestExtractWhileInvariant(unittest.TestCase):
+    def program_test(self, loop, expected):
+        tokens = imp_lex(loop)
+        result = imp_parse(tokens)
+        self.assertNotEquals(None, result)
+        (body, invariant) = extract_while_invariant(result.value)
+        self.assertEquals(expected, invariant.condition)
+
+    def test_extract_true(self):
+        code = 'while x > 0 do x := 1 end'
+        expected = TrueBexp()
+        self.program_test(code, expected)
+
+    def test_extract_simple(self):
+        code = 'while x <= y do inv x = y end; x := 1 end'
+        expected = RelopBexp('=', VarAexp('x'), VarAexp('y'))
+        self.program_test(code, expected)
+
+    def test_extract_not_so_simple(self):
+        code = 'while x = y do inv x = y or x != y end; x := 1 end'
+        expected = OrBexp(
+            RelopBexp('=', VarAexp('x'), VarAexp('y')),
+            RelopBexp('!=', VarAexp('x'), VarAexp('y'))
+        )
+        self.program_test(code, expected)
+
 class TestParseParsed(unittest.TestCase):
     def program_test(self, code, expected):
         tokens = imp_lex(code)
@@ -39,6 +65,21 @@ class TestParseParsed(unittest.TestCase):
                     AssignStatement('x', IntAexp(2)),
                     AssignStatement('y', IntAexp(10))
                 ]
+            )
+        ]
+        self.program_test(code, expected)
+
+    def test_if_inside_if(self):
+        code = 'if x + 1 < 3 then x := 3 else if 3 >= x + 1 then x := 4 else x := 5 end end'
+        expected = [
+            IfStatement(
+                RelopBexp('<', BinopAexp('+', VarAexp('x'), IntAexp(1)), IntAexp(3)),
+                [AssignStatement('x', IntAexp(3))],
+                [IfStatement(
+                    RelopBexp('>=', IntAexp(3), BinopAexp('+', VarAexp('x'), IntAexp(1))),
+                    [AssignStatement('x', IntAexp(4))],
+                    [AssignStatement('x', IntAexp(5))]
+                )]
             )
         ]
         self.program_test(code, expected)

@@ -29,8 +29,7 @@ if __name__ == '__main__':
 
 
     parse_result = parse_result.value
-    program = parse_parsed(parse_result)
-    (pre, commands, pos) = to_triple(program)
+    (pre, commands, pos) = to_triple(parse_result)
 
     try:
         print wp(commands, pos.condition)

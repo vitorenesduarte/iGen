@@ -1,5 +1,17 @@
 from imp_ast import *
 
+def extract_while_invariant(loop):
+    body = parse_parsed(loop.body)
+    inv = InvStatement(TrueBexp())
+
+    for i in xrange(0, len(body)):
+        command = body[i]
+        if isinstance(command, InvStatement):
+            body.pop(i)
+            return (body, command)
+
+    return (body, inv)
+
 def parse_parsed(command):
     return parse_parsed_r(command, [])
 
@@ -25,11 +37,9 @@ def parse_parsed_r(command, seq):
 
     elif isinstance(command, WhileStatement):
         condition = command.condition
-        body = command.body
 
-        bodyParsed = parse_parsed(body)
-        (bodyParsed, invariant) = extract_while_invariant(bodyParsed)
-        newWhile = WhileStatement(condition, bodyParsed, invariant)
+        (body, invariant) = extract_while_invariant(command)
+        newWhile = WhileStatement(condition, body, invariant)
 
         return [newWhile] + seq
 
@@ -37,6 +47,7 @@ def parse_parsed_r(command, seq):
         return [command] + seq
 
 def to_triple(program):
+    program = parse_parsed(program)
     pre = PreStatement(TrueBexp())
     pos = PosStatement(TrueBexp())
     commands = []
@@ -51,14 +62,3 @@ def to_triple(program):
             commands.append(command)
 
     return (pre, commands, pos)
-
-def extract_while_invariant(body):
-    inv = InvStatement(TrueBexp())
-    for i in xrange(0, len(body)):
-        command = body[i]
-        if isinstance(command, InvStatement):
-            body.pop(i)
-            return (body, command)
-
-    return (body, inv)
-
