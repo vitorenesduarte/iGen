@@ -34,6 +34,14 @@ class Aexp(Equality):
 class Bexp(Equality):
     pass
 
+class TrueBexp(Bexp):
+    def __repr__(self):
+        return 'TrueBexp'
+
+class FalseBexp(Bexp):
+    def __repr__(self):
+        return 'FalseBexp'
+
 class IntAexp(Aexp):
     def __init__(self, i):
         self.i = i
@@ -196,7 +204,7 @@ class IfStatement(Statement):
                 self.false_stmt.eval(env)
 
 class WhileStatement(Statement):
-    def __init__(self, condition, body, invariant=RelopBexp('=', IntAexp(0), IntAexp(0))): # TODO change this to true
+    def __init__(self, condition, body, invariant=TrueBexp()):
         self.condition = condition
         self.body = body
         self.invariant = invariant

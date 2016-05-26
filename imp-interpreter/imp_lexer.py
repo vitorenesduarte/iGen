@@ -25,9 +25,9 @@
 
 import lexer
 
-RESERVED  = 'RESERVED'
-INT       = 'INT'
-ID        = 'ID'
+RESERVED = 'RESERVED'
+INT      = 'INT'
+ID       = 'ID'
 
 token_exprs = [
     (r'[ \n\t]+',              None),

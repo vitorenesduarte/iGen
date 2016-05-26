@@ -4,16 +4,12 @@ import sys
 sys.path.append('imp-interpreter')
 
 from imp_ast import *
-from combinators import *
 
 def parse_parsed(command):
     return parse_parsed_r(command, [])
 
 def parse_parsed_r(command, seq):
-    if isinstance(command, Result):
-        return parse_parsed_r(command.value, seq)
-
-    elif isinstance(command, CompoundStatement):
+    if isinstance(command, CompoundStatement):
         fst = command.first
         snd = command.second
 
@@ -45,13 +41,9 @@ def parse_parsed_r(command, seq):
     else:
         return [command] + seq
 
-def truth():
-    # TODO change this to true
-    return RelopBexp('=', IntAexp(0), IntAexp(0))
-
 def to_triple(program):
-    pre = PreStatement(truth())
-    pos = PosStatement(truth())
+    pre = PreStatement(TrueBexp())
+    pos = PosStatement(TrueBexp())
     commands = []
 
     for i in xrange(0, len(program)):
@@ -66,7 +58,7 @@ def to_triple(program):
     return (pre, commands, pos)
 
 def extract_while_invariant(body):
-    inv = InvStatement(truth())
+    inv = InvStatement(TrueBexp())
     for i in xrange(0, len(body)):
         command = body[i]
         if isinstance(command, InvStatement):
