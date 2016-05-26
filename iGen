@@ -2,8 +2,9 @@
 
 import sys
 
-# Add imp-interpreter folder to sys.path
+# Add imp-interpreter and src folder to sys.path
 sys.path.append('imp-interpreter')
+sys.path.append('src')
 
 from imp_parser import *
 from imp_lexer import *

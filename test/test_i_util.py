@@ -1,8 +1,5 @@
 import unittest
-import sys
-
-#Add imp-interpreter folder to sys.path
-sys.path.append('imp-interpreter')
+import os, sys
 
 from imp_parser import *
 from imp_lexer import *

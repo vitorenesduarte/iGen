@@ -1,8 +1,3 @@
-import sys
-
-# Add imp-interpreter folder to sys.path
-sys.path.append('imp-interpreter')
-
 from imp_ast import *
 
 def parse_parsed(command):
