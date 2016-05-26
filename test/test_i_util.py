@@ -108,7 +108,13 @@ class TestParseParsed(unittest.TestCase):
                 RelopBexp('<', IntAexp(0), VarAexp('x')),
                 [],
                 InvStatement(
-                    TrueBexp()
+                    AndBexp(
+                        AndBexp(
+                            RelopBexp('<=', VarAexp('x'), IntAexp(0)),
+                            RelopBexp('>', VarAexp('i'), IntAexp(2))
+                        ),
+                        RelopBexp('>', VarAexp('i'), IntAexp(3))
+                    )
                 )
             )
         ]
