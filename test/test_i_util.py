@@ -1,5 +1,4 @@
 import unittest
-import os, sys
 
 from imp_parser import *
 from imp_lexer import *
@@ -7,6 +6,8 @@ from imp_lexer import *
 from i_util import *
 
 class TestExtractWhileInvariant(unittest.TestCase):
+    maxDiff = None
+
     def program_test(self, loop, expected):
         tokens = imp_lex(loop)
         result = imp_parse(tokens)
@@ -33,6 +34,8 @@ class TestExtractWhileInvariant(unittest.TestCase):
         self.program_test(code, expected)
 
 class TestParseParsed(unittest.TestCase):
+    maxDiff = None
+
     def program_test(self, code, expected):
         tokens = imp_lex(code)
         result = imp_parse(tokens)
@@ -113,9 +116,10 @@ class TestParseParsed(unittest.TestCase):
                             RelopBexp('<=', VarAexp('x'), IntAexp(0)),
                             RelopBexp('>', VarAexp('i'), IntAexp(2))
                         ),
-                        RelopBexp('>', VarAexp('i'), IntAexp(3))
+                        RelopBexp('>', VarAexp('i'), IntAexp(4))
                     )
                 )
             )
         ]
         self.program_test(code, expected)
+
