@@ -123,3 +123,73 @@ class TestParseParsed(unittest.TestCase):
         ]
         self.program_test(code, expected)
 
+class TestToTriple(unittest.TestCase):
+    maxDiff = None
+
+    def program_test(self, code, expected):
+        tokens = imp_lex(code)
+        result = imp_parse(tokens)
+        self.assertNotEquals(None, result)
+        triple = to_triple(result.value)
+        self.assertEquals(expected, triple)
+
+    def test_without_pre(self):
+        code = 'pre x > 0 end; if i > 0 then x := 0 end'
+        expected = (
+            PreStatement(RelopBexp('>', VarAexp('x'), IntAexp(0))),
+            [
+                IfStatement(
+                    RelopBexp('>', VarAexp('i'), IntAexp(0)),
+                    [AssignStatement('x', IntAexp(0))],
+                    []
+                )
+            ],
+            PosStatement(TrueBexp())
+        )
+        self.program_test(code, expected)
+
+    def test_without_pos(self):
+        code = 'if i > 0 then x := 0 end; pos x < 0 end'
+        expected = (
+            PreStatement(TrueBexp()),
+            [
+                IfStatement(
+                    RelopBexp('>', VarAexp('i'), IntAexp(0)),
+                    [AssignStatement('x', IntAexp(0))],
+                    []
+                )
+            ],
+            PosStatement(RelopBexp('<', VarAexp('x'), IntAexp(0))),
+        )
+        self.program_test(code, expected)
+
+    def test_without_both(self):
+        code = 'if i > 0 then x := 0 end'
+        expected = (
+            PreStatement(TrueBexp()),
+            [
+                IfStatement(
+                    RelopBexp('>', VarAexp('i'), IntAexp(0)),
+                    [AssignStatement('x', IntAexp(0))],
+                    []
+                )
+            ],
+            PosStatement(TrueBexp()),
+        )
+        self.program_test(code, expected)
+
+    def test_with_both(self):
+        code = 'pre x > 0 end; if i > 0 then x := 0 end; pos x < 0 end'
+        expected = (
+            PreStatement(RelopBexp('>', VarAexp('x'), IntAexp(0))),
+            [
+                IfStatement(
+                    RelopBexp('>', VarAexp('i'), IntAexp(0)),
+                    [AssignStatement('x', IntAexp(0))],
+                    []
+                )
+            ],
+            PosStatement(RelopBexp('<', VarAexp('x'), IntAexp(0))),
+        )
+        self.program_test(code, expected)
+

@@ -43,6 +43,9 @@ def parse_parsed_r(command, seq):
 
         return [newWhile] + seq
 
+    elif command == None:
+        return seq
+
     else:
         return [command] + seq
 
