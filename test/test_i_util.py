@@ -21,7 +21,7 @@ class TestExtractWhileInvariant(unittest.TestCase):
 
     def test_extract_simple(self):
         code = 'while x <= y do inv x = y + 1 end; x := 1 end'
-        expected = RelopBexp('=', VarAexp('x'), VarAexp('y'))
+        expected = RelopBexp('=', VarAexp('x'), BinopAexp('+', VarAexp('y'), IntAexp(1)))
         self.program_test(code, expected)
 
     def test_extract_not_so_simple(self):
@@ -85,7 +85,7 @@ class TestParseParsed(unittest.TestCase):
         self.program_test(code, expected)
 
     def test_while(self):
-        code = 'x := 10; y := 0; while x > 0 do y := y + 1; x := 20 end'
+        code = 'x := 10; y := 0; while x > 0 do y := y + 1; x := 20 end; i := i + 1'
         expected = [
             AssignStatement('x', IntAexp(10)),
             AssignStatement('y', IntAexp(0)),
@@ -96,6 +96,20 @@ class TestParseParsed(unittest.TestCase):
                     AssignStatement('x', IntAexp(20))
                 ],
                 InvStatement(TrueBexp())
+            ),
+            AssignStatement('i', BinopAexp('+', VarAexp('i'), IntAexp(1)))
+        ]
+        self.program_test(code, expected)
+
+    def test_while_with_invariant(self):
+        code = 'while 0 < x do inv x <= 0 and i > 2 and i > 3 end end'
+        expected = [
+            WhileStatement(
+                RelopBexp('<', IntAexp(0), VarAexp('x')),
+                [],
+                InvStatement(
+                    TrueBexp()
+                )
             )
         ]
         self.program_test(code, expected)
