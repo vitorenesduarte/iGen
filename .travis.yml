@@ -1,0 +1,4 @@
+language: python
+script:
+  - bash tests.sh
+sudo: false
