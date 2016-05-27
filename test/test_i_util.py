@@ -194,7 +194,7 @@ class TestToTriple(unittest.TestCase):
                     []
                 )
             ],
-            PosStatement(RelopBexp('<', VarAexp('x'), IntAexp(1))),
+            PosStatement(RelopBexp('<', VarAexp('x'), IntAexp(0))),
         )
         self.program_test(code, expected)
 
