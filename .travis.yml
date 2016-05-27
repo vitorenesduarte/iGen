@@ -1,6 +1,6 @@
 language: python
 install:
-  - pip install nosetests
+  - pip install nose
 script:
   - export PYTHONPATH=$PWD/src:$PWD/test:$PWD/imp-interpreter
   - nosetests imp-interpreter/ test/ -v --with-coverage
