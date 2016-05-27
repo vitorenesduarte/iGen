@@ -1,5 +1,7 @@
 import unittest
 
+from nose.tools import nottest
+
 from imp_parser import *
 from imp_lexer import *
 
@@ -8,6 +10,7 @@ from i_util import *
 class TestExtractWhileInvariant(unittest.TestCase):
     maxDiff = None
 
+    @nottest
     def program_test(self, loop, expected):
         tokens = imp_lex(loop)
         result = imp_parse(tokens)
@@ -36,6 +39,7 @@ class TestExtractWhileInvariant(unittest.TestCase):
 class TestParseParsed(unittest.TestCase):
     maxDiff = None
 
+    @nottest
     def program_test(self, code, expected):
         tokens = imp_lex(code)
         result = imp_parse(tokens)
@@ -126,6 +130,7 @@ class TestParseParsed(unittest.TestCase):
 class TestToTriple(unittest.TestCase):
     maxDiff = None
 
+    @nottest
     def program_test(self, code, expected):
         tokens = imp_lex(code)
         result = imp_parse(tokens)
