@@ -55,6 +55,9 @@ def wp_assert(command, Q):
     return AndBexp(P, Q)
 
 def update_value(variable, value, Q):
+    if isinstance(Q, TrueBexp) or isinstance(Q, FalseBexp):
+        return Q
+
     if isinstance(Q, IntAexp):
         return Q
 

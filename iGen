@@ -10,7 +10,7 @@ from imp_parser import *
 from imp_lexer import *
 
 from i_util import *
-from wp import *
+from i_wp import *
 
 def usage():
     sys.stderr.write('Usage: iGen filename\n')
