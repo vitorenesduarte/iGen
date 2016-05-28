@@ -24,6 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from nose.tools import nottest
 from lexer import *
 
 KEYWORD = 'KEYWORD'
@@ -38,6 +39,7 @@ token_exprs = [
 ]
 
 class TestLexer(unittest.TestCase):
+    @nottest
     def lexer_test(self, code, expected):
         actual = lex(code, token_exprs)
         self.assertEquals(expected, actual)

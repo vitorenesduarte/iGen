@@ -1,4 +1,9 @@
 language: python
+install:
+  - pip install nose coverage
 script:
-  - bash tests.sh
+  - export PYTHONPATH=$PWD/src:$PWD/test:$PWD/imp-interpreter
+  - nosetests imp-interpreter/ test/ -v --with-coverage
+notifications:
+    email: false
 sudo: false

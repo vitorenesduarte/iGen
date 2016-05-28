@@ -24,6 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from nose.tools import nottest
 from imp_lexer import *
 from combinators import *
 
@@ -33,6 +34,7 @@ def keyword(s):
     return Reserved(s, RESERVED)
 
 class TestCombinators(unittest.TestCase):
+    @nottest
     def combinator_test(self, code, parser, expected):
         tokens = imp_lex(code)
         result = parser(tokens, 0)

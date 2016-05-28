@@ -19,5 +19,5 @@ $ iGen examples/hello_notes.imp
 
 Run Tests:
 ```bash
-$ bash tests.sh
+$ iRunTests.sh
 ```

@@ -51,10 +51,13 @@ def wp_assume(command, Q):
     return ImplBexp(P, Q)
 
 def wp_assert(command, Q):
-    Q = command.condition
+    P = command.condition
     return AndBexp(P, Q)
 
 def update_value(variable, value, Q):
+    if isinstance(Q, TrueBexp) or isinstance(Q, FalseBexp):
+        return Q
+
     if isinstance(Q, IntAexp):
         return Q
 

@@ -24,10 +24,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import unittest
+from nose.tools import nottest
 from imp_lexer import *
 from imp_parser import *
 
 class TestEvaluation(unittest.TestCase):
+    @nottest
     def program_test(self, code, expected_env):
         tokens = imp_lex(code)
         result = imp_parse(tokens)
