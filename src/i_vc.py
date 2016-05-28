@@ -11,15 +11,20 @@ def vc_(commands, Q, index):
     command = commands[index]
 
     if isinstance(command, AssignStatement):
-        return []
+        vcs = []
     
-    if isinstance(command, IfStatement):
-        return vc_if(command, Q)
+    elif isinstance(command, IfStatement):
+        vcs = vc_if(command, Q)
 
-    if isinstance(command, WhileStatement):
-        return vc_while(command, Q)
+    elif isinstance(command, WhileStatement):
+        vcs = vc_while(command, Q)
 
-    raise Exception("vc: unsupported " + str(command))
+    else:
+        raise Exception("vc: unsupported " + str(command))
+
+    Q_ = wp([command], Q)
+    return vcs + vc_(commands, Q_, index - 1)
+
 
 def vc_if(command, Q):
     condition = command.condition

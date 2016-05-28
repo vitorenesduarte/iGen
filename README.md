@@ -14,7 +14,7 @@ $ make
 
 Example:
 ```bash
-$ iGen examples/hello_notes.imp
+$ iGen examples/hello.imp | z3 -in
 ```
 
 Run Tests:
