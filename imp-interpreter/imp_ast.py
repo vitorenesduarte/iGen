@@ -36,18 +36,18 @@ class Bexp(Equality):
 
 class TrueBexp(Bexp):
     def __repr__(self):
-        return 'TrueBexp'
+        return 'true'
 
 class FalseBexp(Bexp):
     def __repr__(self):
-        return 'FalseBexp'
+        return 'false'
 
 class IntAexp(Aexp):
     def __init__(self, i):
         self.i = i
 
     def __repr__(self):
-        return 'IntAexp(%d)' % self.i
+        return '%d' % self.i
 
     def eval(self, env):
         return self.i
@@ -57,7 +57,7 @@ class VarAexp(Aexp):
         self.name = name
 
     def __repr__(self):
-        return 'VarAexp(%s)' % self.name
+        return '%s' % self.name
 
     def eval(self, env):
         if self.name in env:
@@ -72,7 +72,7 @@ class BinopAexp(Aexp):
         self.right = right
 
     def __repr__(self):
-        return 'BinopAexp(%s, %s, %s)' % (self.op, self.left, self.right)
+        return '(%s %s %s)' % (self.op, self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -96,7 +96,7 @@ class RelopBexp(Bexp):
         self.right = right
 
     def __repr__(self):
-        return 'RelopBexp(%s, %s, %s)' % (self.op, self.left, self.right)
+        return '(%s %s %s)' % (self.op, self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -123,7 +123,7 @@ class AndBexp(Bexp):
         self.right = right
 
     def __repr__(self):
-        return 'AndBexp(%s, %s)' % (self.left, self.right)
+        return '(and %s %s)' % (self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -136,7 +136,7 @@ class OrBexp(Bexp):
         self.right = right
 
     def __repr__(self):
-        return 'OrBexp(%s, %s)' % (self.left, self.right)
+        return '(or %s %s)' % (self.left, self.right)
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -149,14 +149,14 @@ class ImplBexp(Bexp):
         self.right = right
 
     def __repr__(self):
-        return 'ImplBexp(%s, %s)' % (self.left, self.right)
+        return '(=> %s %s)' % (self.left, self.right)
 
 class NotBexp(Bexp):
     def __init__(self, exp):
         self.exp = exp
 
     def __repr__(self):
-        return 'NotBexp(%s)' % self.exp
+        return '(not %s)' % self.exp
 
     def eval(self, env):
         value = self.exp.eval(env)
@@ -168,7 +168,7 @@ class AssignStatement(Statement):
         self.aexp = aexp
 
     def __repr__(self):
-        return 'AssignStatement(%s, %s)' % (self.name, self.aexp)
+        return '(:= %s %s)' % (self.name, self.aexp)
 
     def eval(self, env):
         value = self.aexp.eval(env)
@@ -180,7 +180,7 @@ class CompoundStatement(Statement):
         self.second = second
 
     def __repr__(self):
-        return 'CompoundStatement(%s, %s)' % (self.first, self.second)
+        return '(seq %s %s)' % (self.first, self.second)
 
     def eval(self, env):
         self.first.eval(env)
@@ -193,7 +193,7 @@ class IfStatement(Statement):
         self.false_stmt = false_stmt
 
     def __repr__(self):
-        return 'IfStatement(%s, %s, %s)' % (self.condition, self.true_stmt, self.false_stmt)
+        return '(%s? %s %s)' % (self.condition, self.true_stmt, self.false_stmt)
 
     def eval(self, env):
         condition_value = self.condition.eval(env)
@@ -210,7 +210,7 @@ class WhileStatement(Statement):
         self.invariant = invariant
 
     def __repr__(self):
-        return 'WhileStatement(%s, %s, %s)' % (self.condition, self.body, self.invariant)
+        return '(%s?* %s %s)' % (self.condition, self.body, self.invariant)
 
     def eval(self, env):
         condition_value = self.condition.eval(env)
@@ -227,20 +227,20 @@ class VCStatement(Statement):
 
 class PreStatement(VCStatement):
     def __repr__(self):
-        return 'PreStatement(%s)' % (self.condition)
+        return '(pre %s)' % (self.condition)
 
 class PosStatement(VCStatement):
     def __repr__(self):
-        return 'PosStatement(%s)' % (self.condition)
+        return '(pos %s)' % (self.condition)
 
 class InvStatement(VCStatement):
     def __repr__(self):
-        return 'InvStatement(%s)' % (self.condition)
+        return '(inv %s)' % (self.condition)
 
 class AssumeStatement(VCStatement):
     def __repr__(self):
-        return 'AssumeStatement(%s)' % (self.condition)
+        return '(assume %s)' % (self.condition)
 
 class AssertStatement(VCStatement):
     def __repr__(self):
-        return 'AssertStatement(%s)' % (self.condition)
+        return '(assert %s)' % (self.condition)
