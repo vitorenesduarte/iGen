@@ -31,7 +31,7 @@ def produce_unsat_cores():
     return "(set-option :produce-unsat-cores true)"
 
 def get_declaration(variable):
-    return "(declare-fun %s () Int)" % variable
+    return "(declare-const %s Int)" % variable
 
 def to_assert(vc):
     return "(assert %s)" % vc
