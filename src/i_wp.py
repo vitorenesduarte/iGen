@@ -1,29 +1,33 @@
 from imp_ast import *
 
 def wp(commands, Q):
-    if not commands:
+    return wp_(commands, Q, len(commands) - 1)
+
+def wp_(commands, Q, index):
+    if index < 0:
         return Q
-    command = commands.pop() # last command on list
+
+    command = commands[index]
 
     if isinstance(command, AssignStatement):
         Q = wp_assign(command, Q)
-        return wp(commands, Q)
+        return wp_(commands, Q, index - 1)
     
     if isinstance(command, IfStatement):
         Q = wp_if(command, Q)
-        return wp(commands, Q)
+        return wp_(commands, Q, index - 1)
 
     if isinstance(command, WhileStatement):
         Q = wp_while(command, Q)
-        return wp(commands, Q)
+        return wp_(commands, Q, index - 1)
 
     if isinstance(command, AssumeStatement):
         Q = wp_assume(command, Q)
-        return wp(commands, Q)
+        return wp_(commands, Q, index - 1)
 
     if isinstance(command, AssertStatement):
         Q = wp_assert(command, Q)
-        return wp(commands, Q)
+        return wp_(commands, Q, index - 1)
 
     raise Exception("wp: unsupported " + str(command))
 
