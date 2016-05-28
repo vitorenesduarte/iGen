@@ -10,7 +10,8 @@ from imp_parser import *
 from imp_lexer import *
 
 from i_util import *
-from i_wp import *
+from i_vc_gen import *
+from i_smtlib import *
 
 def usage():
     sys.stderr.write('Usage: iGen filename\n')
@@ -27,11 +28,15 @@ if __name__ == '__main__':
         sys.stderr.write('Parse error!\n')
         sys.exit(1)
 
-
-    parse_result = parse_result.value
-    (pre, commands, pos) = to_triple(parse_result)
-
     try:
-        print wp(commands, pos.condition)
+        parse_result = parse_result.value
+        triple = to_triple(parse_result)
+        vcs = vc_gen(triple)
+        smtlib = to_smtlib(vcs)
+
+        for i in xrange(0, len(smtlib)):
+            print smtlib[i]
+
     except Exception as e:
         print e
+

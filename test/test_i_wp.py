@@ -95,8 +95,11 @@ class TestWP(unittest.TestCase):
         result = imp_parse(tokens)
         self.assertNotEquals(None, result)
         (pre, commands, pos)  = to_triple(result.value)
+        number = len(commands)
+
         weakest = wp(commands, pos.condition)
         self.assertEquals(expected, weakest)
+        self.assertEquals(number, len(commands))
 
     def test_no_commands(self):
         code = 'pos x > 0 end'
