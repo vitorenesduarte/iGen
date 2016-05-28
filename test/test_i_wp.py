@@ -86,3 +86,67 @@ class TestUpdateValue(unittest.TestCase):
         self.program_test(condition, 'y', IntAexp(1), expected_one)
         self.program_test(condition, 'z', VarAexp('x'), expected_two)
 
+class TestWP(unittest.TestCase):
+    maxDiff = None
+
+    @nottest
+    def program_test(self, code, expected):
+        tokens = imp_lex(code)
+        result = imp_parse(tokens)
+        self.assertNotEquals(None, result)
+        (pre, commands, pos)  = to_triple(result.value)
+        weakest = wp(commands, pos.condition)
+        self.assertEquals(expected, weakest)
+
+    def test_no_commands(self):
+        code = 'pos x > 0 end'
+        expected = RelopBexp('>', VarAexp('x'), IntAexp(0))
+        self.program_test(code, expected)
+
+    def test_assign_with_true(self):
+        code = 'x := 1'
+        expected = TrueBexp()
+        self.program_test(code, expected)
+
+    def test_assign(self):
+        code = 'x := 1; pos x > 0 end'
+        expected = RelopBexp('>', IntAexp(1), IntAexp(0))
+        self.program_test(code, expected)
+
+    def test_seq(self):
+        code = 'y := 1; y := 2; x := 1; pos y = x end'
+        expected = RelopBexp('=', IntAexp(2), IntAexp(1))
+        self.program_test(code, expected)
+
+    def test_if(self):
+        code = 'if x > 0 then x := 1 else x := 2 end; pos x > 0 end'
+        expected = AndBexp(
+            ImplBexp(
+                RelopBexp('>', VarAexp('x'), IntAexp(0)),
+                RelopBexp('>', IntAexp(1), IntAexp(0))
+            ),
+            ImplBexp(
+                NotBexp(RelopBexp('>', VarAexp('x'), IntAexp(0))),
+                RelopBexp('>', IntAexp(2), IntAexp(0))
+            )
+        )
+        self.program_test(code, expected)
+
+    def test_while(self):
+        code = 'while x > 0 do inv x >= 0 end; x := x + 1 end; x := 2; y := x + 1; pos x > 0 and y > 0 end'
+        expected = RelopBexp('>=', VarAexp('x'), IntAexp(0))
+        self.program_test(code, expected)
+
+    def test_assume(self):
+        code = 'assume x > 3 end; pos x > 0 end'
+        expected = ImplBexp(
+            RelopBexp('>', VarAexp('x'), IntAexp(3)),
+            RelopBexp('>', VarAexp('x'), IntAexp(0))
+        )
+        self.program_test(code, expected)
+
+    def test_assert(self):
+        code = 'x := 1; assert x > 0 end'
+        expected = AndBexp(RelopBexp('>', IntAexp(1), IntAexp(0)), TrueBexp())
+        self.program_test(code, expected)
+
