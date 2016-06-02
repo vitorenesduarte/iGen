@@ -1,2 +1,2 @@
 #!/bin/bash
-kill -TERM `cat .WebPID`
+kill -TERM `cat .WebServerPID`
