@@ -1,5 +1,6 @@
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 from SocketServer import ThreadingMixIn
+from i_gen import run_vc_gen
 import threading
 import re
 import argparse
@@ -12,9 +13,11 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             if self.headers['Content-Type'] == 'application/json':
                 self.json_string = self.rfile.read(int(self.headers['Content-Length']))
                 json = simplejson.loads(self.json_string)
-                print json['code']
+                code = json['code']
+                (vcs, output) = run_vc_gen(code)
+                print vcs
+                print output
             else:
-                data = {}
                 self.send_response(200)
                 self.end_headers()
         else:

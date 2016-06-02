@@ -38,8 +38,14 @@ class TrueBexp(Bexp):
     def __repr__(self):
         return 'true'
 
+    def pretty(self):
+        return 'true'
+
 class FalseBexp(Bexp):
     def __repr__(self):
+        return 'false'
+
+    def pretty(self):
         return 'false'
 
 class IntAexp(Aexp):
@@ -47,6 +53,9 @@ class IntAexp(Aexp):
         self.i = i
 
     def __repr__(self):
+        return '%d' % self.i
+
+    def pretty(self):
         return '%d' % self.i
 
     def eval(self, env):
@@ -57,6 +66,9 @@ class VarAexp(Aexp):
         self.name = name
 
     def __repr__(self):
+        return '%s' % self.name
+
+    def pretty(self):
         return '%s' % self.name
 
     def eval(self, env):
@@ -73,6 +85,9 @@ class BinopAexp(Aexp):
 
     def __repr__(self):
         return '(%s %s %s)' % (self.op, self.left, self.right)
+
+    def pretty(self):
+        return '(%s %s %s)' % (self.left.pretty(), self.op, self.right.pretty())
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -97,6 +112,9 @@ class RelopBexp(Bexp):
 
     def __repr__(self):
         return '(%s %s %s)' % (self.op, self.left, self.right)
+
+    def pretty(self):
+        return '(%s %s %s)' % (self.left.pretty(), self.op, self.right.pretty())
 
     def eval(self, env):
         left_value = self.left.eval(env)
@@ -125,6 +143,9 @@ class AndBexp(Bexp):
     def __repr__(self):
         return '(and %s %s)' % (self.left, self.right)
 
+    def pretty(self):
+        return '(%s and %s)' % (self.left.pretty(), self.right.pretty())
+
     def eval(self, env):
         left_value = self.left.eval(env)
         right_value = self.right.eval(env)
@@ -138,6 +159,9 @@ class OrBexp(Bexp):
     def __repr__(self):
         return '(or %s %s)' % (self.left, self.right)
 
+    def pretty(self):
+        return '(%s or %s)' % (self.left.pretty(), self.right.pretty())
+
     def eval(self, env):
         left_value = self.left.eval(env)
         right_value = self.right.eval(env)
@@ -150,6 +174,9 @@ class ImplBexp(Bexp):
 
     def __repr__(self):
         return '(=> %s %s)' % (self.left, self.right)
+    
+    def pretty(self):
+        return '(%s => %s)' % (self.left.pretty(), self.right.pretty())
 
 class NotBexp(Bexp):
     def __init__(self, exp):
@@ -157,6 +184,9 @@ class NotBexp(Bexp):
 
     def __repr__(self):
         return '(not %s)' % self.exp
+
+    def pretty(self):
+        return '(not %s)' % self.exp.pretty()
 
     def eval(self, env):
         value = self.exp.eval(env)
