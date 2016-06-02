@@ -33,8 +33,7 @@ def run_vc_gen(text):
     tokens = imp_lex(text)
     parse_result = imp_parse(tokens)
     if not parse_result:
-        sys.stderr.write('Parse error!\n')
-        sys.exit(1)
+        return "Parse error"
 
     parse_result = parse_result.value
     triple = to_triple(parse_result)
