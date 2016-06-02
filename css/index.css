@@ -1,0 +1,19 @@
+.col-center-block {
+  float: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.green-title {
+  color: #00bc8c;
+}
+
+.green-text-area {
+  resize: vertical;
+}
+
+#output-div {
+  display: none;
+}
+

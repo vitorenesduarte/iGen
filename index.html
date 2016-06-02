@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>GreenC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="./css/darkly/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" href="./css/index.css" media="screen">
+  </head>
+
+  <body>
+    <div class="container">
+      <div>
+        <div class="row">
+          <div class="col-center-block col-lg-8 col-md-10">
+            <div class="page-header">
+              <h1 id="forms" class="title">iGen</h1>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-center-block col-lg-8 col-md-10">
+            <div class="well bs-component">
+              <form class="form-horizontal">
+                <fieldset>
+                  <div class="form-group col-lg-12">
+                    <label for="textArea" class="control-label">Code</label>
+                    <div>
+                      <textarea class="form-control green-text-area" rows="10" id="code"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group col-lg-12">
+                    <div class="pull-right">
+                      <a class="btn btn-success" id="run" href="">Run</a>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div id="output-div">
+          <div class="row">
+            <div class="col-center-block col-lg-8 col-md-10">
+              <div class="well bs-component">
+                <form class="form-horizontal">
+                  <fieldset>
+                    <div class="form-group col-lg-12">
+                      <label for="textArea" class="control-label">Output</label>
+                      <div>
+                        <textarea class="form-control green-text-area" rows="10" id="output"></textarea>
+                      </div>
+                    </div>
+                    <div class="col-lg-12">
+                      <div id="container"></div>
+                    </div>
+                  </fieldset>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <div class="row">
+          <div class="col-center-block col-lg-8 col-md-10">
+
+            <ul class="list-unstyled">
+              <li class="pull-right"><a id="back-to-top" href="">I'm bored down here</a></li>
+            </ul>
+            <p>Made by <a class="do-nothing" href="" target="_blank">Nelson Torres</a> and <a href="http://vitorenesduarte.github.io/" target="_blank">Vitor Enes</a></p>
+            <p>Powered by <a href="https://bootswatch.com/darkly/" target="_blank">Bootswatch</a></p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/modules/exporting.js"></script>
+    <script src="./js/index.js"></script>
+  </body>
+</html>
