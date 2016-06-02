@@ -12,6 +12,11 @@ $ cd build
 $ make
 ```
 
+```bash
+$ pip install nose coverage
+$ pip install simplejson
+```
+
 #### Example
 ```bash
 $ iGen examples/hello.imp | z3 -in
