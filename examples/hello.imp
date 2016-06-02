@@ -1,16 +1,8 @@
-n := 5;
-p := 1;
+pre n > 0 end;
 
 while n > 0 do
-  n := n - 1;
-  inv n >= 0 and n > 0 end;
+  inv n >= 0 end;
   n := n - 1
 end;
 
-if n < 0 then
-  a := 2
-else
-  a := 3
-end;
-
-pos n = 0 end
+pos n = 1 end

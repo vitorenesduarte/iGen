@@ -2,9 +2,9 @@ n := 5;
 p := 1;
 
 if n < n + 1 then
-  a := 2
+  n := 5
 else
-  a := 3
+  n := 4
 end;
 
 pos n = 5 end
