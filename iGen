@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import subprocess
 
 # Add imp-interpreter and src folder to sys.path
 sys.path.append('imp-interpreter')
@@ -17,26 +18,35 @@ def usage():
     sys.stderr.write('Usage: iGen filename\n')
     sys.exit(1)
 
+def write_to_file(smtlib_list):
+    with open('.smtlib', 'w') as smt_file:
+        for i in xrange(0, len(smtlib_list)):
+            smt_file.write(smtlib_list[i] + "\n")
+
+def execute():
+    command = "z3 .smtlib"
+    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    output = process.communicate()[0]
+    return output
+
+def run_vc_gen(text):
+    tokens = imp_lex(text)
+    parse_result = imp_parse(tokens)
+    if not parse_result:
+        return "Parse error"
+
+    parse_result = parse_result.value
+    triple = to_triple(parse_result)
+    vcs = vc_gen(triple)
+    smtlib = to_smtlib(vcs)
+    write_to_file(smtlib)
+    return execute()
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         usage()
     filename = sys.argv[1]
     text = open(filename).read()
-    tokens = imp_lex(text)
-    parse_result = imp_parse(tokens)
-    if not parse_result:
-        sys.stderr.write('Parse error!\n')
-        sys.exit(1)
+    output = run_vc_gen(text)
 
-    try:
-        parse_result = parse_result.value
-        triple = to_triple(parse_result)
-        vcs = vc_gen(triple)
-        smtlib = to_smtlib(vcs)
-
-        for i in xrange(0, len(smtlib)):
-            print smtlib[i]
-
-    except Exception as e:
-        print e
-
+    print output

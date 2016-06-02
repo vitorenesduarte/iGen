@@ -19,7 +19,7 @@ $ pip install simplejson
 
 #### Example
 ```bash
-$ iGen examples/hello.imp | z3 -in
+$ iGen examples/hello.imp
 ```
 
 #### Tests
