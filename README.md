@@ -14,7 +14,6 @@ $ make
 
 ```bash
 $ pip install nose coverage
-$ pip install simplejson
 ```
 
 #### Example
@@ -24,5 +23,5 @@ $ iGen examples/hello.imp
 
 #### Tests
 ```bash
-$ iRunTests.sh
+$ i-run-tests.sh
 ```
