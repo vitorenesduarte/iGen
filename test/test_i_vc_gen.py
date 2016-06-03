@@ -6,9 +6,9 @@ from imp_parser import *
 from imp_lexer import *
 
 from i_util import *
-from i_vc import *
+from i_vc_gen import *
 
-class TestVC(unittest.TestCase):
+class TestVCGen(unittest.TestCase):
     maxDiff = None
 
     @nottest
@@ -19,26 +19,11 @@ class TestVC(unittest.TestCase):
         (pre, commands, pos)  = to_triple(result.value)
         number = len(commands)
 
-        vcs = vc(commands, pos.condition)
+        vcs = vc_gen((pre, commands, pos))
         self.assertEquals(expected, vcs)
         self.assertEquals(number, len(commands))
 
-    def test_no_commands(self):
-        code = 'pos x > 0 end'
-        expected = []
-        self.program_test(code, expected)
-
-    def test_assign(self):
-        code = 'x := 1; pos x > 0 end'
-        expected = []
-        self.program_test(code, expected)
-
-    def test_if(self):
-        code = 'if x > 0 then x := 1 else x := 2 end; pos x > 0 end'
-        expected = []
-        self.program_test(code, expected)
-
-    def test_while(self):
+    def test_tp(self):
         code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x > 1000 end'
         invariant = AndBexp(
             RelopBexp('<', IntAexp(100), VarAexp('x')),
@@ -50,8 +35,13 @@ class TestVC(unittest.TestCase):
             RelopBexp('<', IntAexp(100), x_plus_one),
             RelopBexp('<=', x_plus_one, IntAexp(1000))
         )
+        pre = RelopBexp('>', VarAexp('x'), IntAexp(100))
         pos = RelopBexp('>', VarAexp('x'), IntAexp(1000))
 
+        vc1 = ImplBexp(
+            pre, 
+            invariant
+        )
         vc2 = ImplBexp(
             AndBexp(invariant, condition),
             wp
@@ -61,6 +51,6 @@ class TestVC(unittest.TestCase):
             pos
         )
 
-        expected = [vc2, vc3]
+        expected = [vc1, vc2, vc3]
         self.program_test(code, expected)
 
