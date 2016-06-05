@@ -1,0 +1,11 @@
+n[10];
+n[2] := 5;
+p := n[1];
+
+if n[8] < n[9] + 1 then
+  n[9] := 5
+else
+  n := 4
+end;
+
+pos n = 5 end

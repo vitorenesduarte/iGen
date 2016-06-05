@@ -33,6 +33,7 @@ def keyword(kw):
 
 num = Tag(INT) ^ (lambda i: int(i))
 id = Tag(ID)
+array = id + keyword('[') + num + keyword(']')
 
 # Top level parser
 def imp_parse(tokens):
@@ -48,13 +49,15 @@ def stmt_list():
     return Exp(stmt(), separator)
 
 def stmt():
-    return assign_stmt() | \
-           if_stmt()     | \
-           while_stmt()  | \
-           pre_stmt()    | \
-           pos_stmt()    | \
-           inv_stmt()    | \
-           assume_stmt() | \
+    return assign_stmt()       | \
+           array_assign_stmt() | \
+           array_decl_stmt()   | \
+           if_stmt()           | \
+           while_stmt()        | \
+           pre_stmt()          | \
+           pos_stmt()          | \
+           inv_stmt()          | \
+           assume_stmt()       | \
            assert_stmt()
 
 def assign_stmt():
@@ -62,6 +65,18 @@ def assign_stmt():
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
     return id + keyword(':=') + aexp() ^ process
+
+def array_assign_stmt():
+    def process(parsed):
+        (((((name, _), index), _), _), exp) = parsed
+        return ArrayAssignStatement(name, index, exp)
+    return array + keyword(':=') + aexp() ^ process
+
+def array_decl_stmt():
+    def process(parsed):
+        (((name, _), index), _) = parsed
+        return ArrayDeclaration(name, index)
+    return array ^ process
 
 def if_stmt():
     def process(parsed):
@@ -149,6 +164,7 @@ def aexp_group():
            
 def aexp_value():
     return (num ^ (lambda i: IntAexp(i))) | \
+           (array ^ process_array)        | \
            (id  ^ (lambda v: VarAexp(v)))
 
 # An IMP-specific combinator for binary operator expressions (aexp and bexp)
@@ -179,6 +195,10 @@ def process_logic(op):
 def process_group(parsed):
     ((_, p), _) = parsed
     return p
+
+def process_array(parsed):
+    (((name, _), index), _) = parsed
+    return ArrayAexp(name, index)
 
 def any_operator_in_list(ops):
     op_parsers = [keyword(op) for op in ops]
