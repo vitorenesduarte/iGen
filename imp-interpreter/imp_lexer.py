@@ -46,6 +46,8 @@ token_exprs = [
     (r'>',                     RESERVED),
     (r'!=',                    RESERVED),
     (r'=',                     RESERVED),
+    (r'\[',                    RESERVED),
+    (r'\]',                    RESERVED),
     (r'and',                   RESERVED),
     (r'or',                    RESERVED),
     (r'not',                   RESERVED),
