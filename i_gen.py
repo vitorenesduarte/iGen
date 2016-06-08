@@ -23,7 +23,7 @@ def write_to_file(smtlib_list):
 
 def execute():
     command = "z3 .smtlib"
-    process = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = process.communicate()[0].rstrip()
     return output
 
