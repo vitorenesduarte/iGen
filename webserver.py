@@ -1,3 +1,5 @@
+import sys
+import os
 from SimpleHTTPServer import SimpleHTTPRequestHandler
 from i_gen import run_vc_gen
 import BaseHTTPServer
@@ -40,4 +42,9 @@ class CORSRequestHandler (SimpleHTTPRequestHandler):
         return
 
 if __name__ == '__main__':
+    directory = "."
+    if len(sys.argv) > 1:
+        directory = sys.argv[1]
+        sys.argv = []
+    os.chdir(directory)
     BaseHTTPServer.test(CORSRequestHandler, BaseHTTPServer.HTTPServer)
