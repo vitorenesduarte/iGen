@@ -1,0 +1,5 @@
+docker run -d \
+           -e PYTHONPATH='iGen/src:iGen/imp-interpreter' \
+           -p 8000:8000 \
+           vitorenesduarte/igen:$1 \
+           python iGen/webserver.py iGen/
