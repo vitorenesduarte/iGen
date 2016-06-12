@@ -30,7 +30,7 @@ $ i-run-tests.sh
 
 #### Docker Build
 ```bash
-$ docker build -t vitorenesduarte/igen:TAG
+$ docker build -t vitorenesduarte/igen:TAG .
 ```
 
 #### Docker Run

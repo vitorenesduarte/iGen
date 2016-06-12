@@ -83,7 +83,7 @@ class ArrayAexp(Aexp):
         self.index = index
 
     def __repr__(self):
-        return '%s[%d]' % (self.name, self.index)
+        return '%s[%s]' % (self.name, self.index)
 
 class BinopAexp(Aexp):
     def __init__(self, op, left, right):
@@ -219,7 +219,7 @@ class ArrayAssignStatement(Statement):
         self.aexp = aexp
 
     def __repr__(self):
-        return '(:= %s[%d] %s)' % (self.name, self.index, self.aexp)
+        return '(:= %s[%s] %s)' % (self.name, self.index, self.aexp)
 
 
 class CompoundStatement(Statement):
@@ -299,4 +299,4 @@ class ArrayDeclaration:
         self.capacity = capacity
 
     def __repr__(self):
-        return 'new %s[%d]' % (self.name, self.capacity)
+        return 'new %s[%s]' % (self.name, self.capacity)

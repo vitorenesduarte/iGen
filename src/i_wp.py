@@ -12,6 +12,10 @@ def wp_(commands, Q, index):
     if isinstance(command, AssignStatement):
         Q = wp_assign(command, Q)
         return wp_(commands, Q, index - 1)
+
+    if isinstance(command, ArrayAssignStatement):
+        Q = wp_array_assign(command, Q)
+        return wp_(commands, Q, index - 1)
     
     if isinstance(command, IfStatement):
         Q = wp_if(command, Q)
@@ -36,16 +40,19 @@ def wp_assign(command, Q):
     value = command.aexp
     return update_value(variable, value, Q)
 
+def wp_array_assign(command, Q):
+    return "ola"
+
 def wp_if(command, Q):
     condition = command.condition
     top = command.true_stmt
     bot = command.false_stmt
-    topWP = wp(top, Q)
-    botWP = wp(bot, Q)
+    top_wp = wp(top, Q)
+    bot_wp = wp(bot, Q)
 
-    leftClause = ImplBexp(condition, topWP)
-    rightClause = ImplBexp(NotBexp(condition), botWP)
-    return AndBexp(leftClause, rightClause)
+    left_clause = ImplBexp(condition, top_wp)
+    right_clause = ImplBexp(NotBexp(condition), bot_wp)
+    return AndBexp(left_clause, right_clause)
 
 def wp_while(command, Q):
     return command.invariant.condition

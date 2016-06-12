@@ -8,4 +8,13 @@ else
   n := 4
 end;
 
-pos n = 5 end
+N := 10;
+n[N] := n[M];
+
+if n[M] > n[N] then
+  n[M] := n[N]
+else
+  N := n[M] + n[N] + 1
+end;
+
+pos n = 5 and n[M] > 3 end

@@ -13,10 +13,11 @@ if __name__ == '__main__':
         usage()
     filename = sys.argv[1]
     text = open(filename).read()
-    (vcs, output) = run_vc_gen(text)
+    result = run_vc_gen(text)
+    (vcs, sat_or_unsat, unsat_core) = result
 
     for i in xrange(len(vcs)):
         print vcs[i]
 
-    print "\n" + str(output)
+    print "\n" + str(sat_or_unsat)
 
