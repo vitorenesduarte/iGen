@@ -7,49 +7,22 @@ def get_capacity(name, arrays):
 
     raise Exception("get_capacity: undeclared array " + str(name))
 
-def get_arrays_declarations(commands):
-    arrays = {}
-
-    for i in xrange(0, len(commands)):
-        command = commands[i]
-        if isinstance(command, ArrayDeclaration):
-            arrays[command.name] = command.capacity
-
-    return arrays
-
-def give_me_my_vcs(commands, Q):
-    arrays = get_arrays_declarations(commands)
-    (vcs, ints) = vc(commands, Q, arrays)
-    return (vcs, ints, arrays)
-
 def vc(commands, Q, arrays):
     return vc_(commands, Q, len(commands) - 1, set(), arrays)
 
 def vc_(commands, Q, index, ints, arrays):
     if index < 0:
-        vcs = {}
-        vcs['safe'] = []
-        vcs['commands'] = []
-        return (vcs, ints)
+        return ([], ints)
 
     command = commands[index]
 
-    if isinstance(command, ArrayDeclaration):
-        vcs = {}
+    if isinstance(command, ArrayDeclaration) or isinstance(command, ArrayAssignStatement):
+        vcs = []
 
     elif isinstance(command, AssignStatement):
         ints.add(command.name)
+        vcs = []
 
-        safe_exp = safe(command.aexp, arrays)
-        vcs = {}
-        vcs['safe'] = safe_exp
-
-    elif isinstance(command, ArrayAssignStatement):
-        safe_index = safe(ArrayAexp(command.name, command.index), arrays)
-        safe_exp = safe(command.aexp, arrays)
-        vcs = {}
-        vcs['safe'] = safe_index + safe_exp
-    
     elif isinstance(command, IfStatement):
         (vcs, ints) = vc_if(command, Q, ints, arrays)
 
@@ -59,9 +32,9 @@ def vc_(commands, Q, index, ints, arrays):
     else:
         raise Exception("vc: unsupported " + str(command))
 
-    Q_ = wp([command], Q)
+    Q_ = wp([command], Q, arrays)
     (more_vcs, ints) = vc_(commands, Q_, index - 1, ints, arrays)
-    return (merge(vcs, more_vcs), ints)
+    return (more_vcs + vcs, ints)
 
 def vc_if(command, Q, ints, arrays):
     condition = command.condition
@@ -70,16 +43,11 @@ def vc_if(command, Q, ints, arrays):
 
     (top_vc, top_ints) = vc(top, Q, arrays)
     (bot_vc, bot_ints) = vc(bot, Q, arrays)
-    top_bot_vcs = merge(top_vc, bot_vc)
-
-    safe_condition = safe(condition, arrays)
-    vcs = {}
-    vcs['safe'] = safe_condition
 
     ints.update([e for e in top_ints])
     ints.update([e for e in bot_ints])
 
-    return (merge(top_bot_vcs, vcs),  ints)
+    return (top_vc + bot_vc, ints)
 
 def vc_while(command, Q, ints, arrays):
     condition = command.condition
@@ -88,72 +56,14 @@ def vc_while(command, Q, ints, arrays):
 
     fst_vc = ImplBexp(
         AndBexp(invariant, condition),
-        wp(body, invariant)
+        wp(body, invariant, arrays)
     )
     snd_vc = ImplBexp(
         AndBexp(invariant, NotBexp(condition)),
         Q
     )
 
-    safe_condition = safe(condition, arrays)
-    vcs = {}
-    vcs['commands'] = [fst_vc, snd_vc]
-    vcs['safe'] = safe_condition
-
     (other_vcs, body_ints) = vc(body, invariant, arrays)
     ints.update([e for e in body_ints])
 
-    return (merge(other_vcs, vcs), ints)
-
-def safe(exp, arrays):
-    if isinstance(exp, IntAexp) or isinstance(exp, VarAexp):
-        return []
-
-    elif isinstance(exp, ArrayAexp):
-        safe_index = AndBexp(
-            RelopBexp('>=', exp.index, IntAexp(0)),
-            RelopBexp('<', exp.index, IntAexp(arrays[exp.name]))
-        )
-        return [safe_index]
-
-    elif isinstance(exp, BinopAexp):
-        left = safe(exp.left, arrays)
-        right = safe(exp.right, arrays)
-        safe_vcs = left + right
-
-        if exp.op == "/":
-            by_zero = RelopBexp('!=', exp.right, IntAexp(0))
-            safe_vcs.append(by_zero)
-
-        return safe_vcs
-
-    elif isinstance(exp, RelopBexp) or isinstance(exp, AndBexp) or isinstance(exp, OrBexp):
-        left = safe(exp.left, arrays)
-        right = safe(exp.right, arrays)
-        
-        return left + right
-
-    elif isinstance(exp, NotBexp):
-        not_exp = safe(exp.exp, arrays)
-        return [not_exp]
-    
-    else:
-        raise Exception("safe: unsupported : " + str(exp))
-
-def merge(dict_a, dict_b):
-    result = {}
-    keys = set(dict_a.keys() + dict_b.keys())
-
-    for key in keys:
-        v_a = []
-        v_b = []
-        if key in dict_a:
-            v_a = dict_a[key]
-
-        if key in dict_b:
-            v_b = dict_b[key]
-
-        result[key] = v_a + v_b
-
-    return result
-
+    return ([fst_vc, snd_vc] + other_vcs, ints)

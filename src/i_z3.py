@@ -56,9 +56,9 @@ def z3it(tactic, vcs, ints, arrays):
     array_decls = declare_arrays(tactic, arrays)
 
     for i in xrange(0, len(vcs)):
-        (vc, vc_name) = vcs[i]
+        vc = vcs[i]
         vc_assert = z3fy(vc, int_decls, array_decls)
-        solver.assert_and_track(vc_assert, vc_name)
+        solver.assert_and_track(vc_assert, "vc_" + str(i))
 
     return (solver.check(), solver.unsat_core())
 

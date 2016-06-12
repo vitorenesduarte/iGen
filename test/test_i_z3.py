@@ -21,6 +21,8 @@ class TestZ3(unittest.TestCase):
         (vcs, ints, arrays) = vc_gen(triple)
         number = len(vcs)
 
+        print ints
+
         (result1, _) = z3it("unbounded_integers", vcs, ints, arrays)
         (result2, _) = z3it("bit_vectors", vcs, ints, arrays)
 

@@ -20,8 +20,7 @@ def pretty(vcs):
     pretty_vcs = []
 
     for i in xrange(len(vcs)):
-        (vc, vc_name) = vcs[i]
-        pretty_vcs.append(vc.pretty())
+        pretty_vcs.append(vcs[i].pretty())
 
     return pretty_vcs
 
