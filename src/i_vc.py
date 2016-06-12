@@ -40,13 +40,13 @@ def vc_(commands, Q, index, ints, arrays):
     elif isinstance(command, AssignStatement):
         ints.add(command.name)
 
-        safe_exp = safe(command.aexp)
+        safe_exp = safe(command.aexp, arrays)
         vcs = {}
         vcs['safe'] = safe_exp
 
     elif isinstance(command, ArrayAssignStatement):
-        safe_index = safe(ArrayAexp(command.name, command.index))
-        safe_exp = safe(command.aexp)
+        safe_index = safe(ArrayAexp(command.name, command.index), arrays)
+        safe_exp = safe(command.aexp, arrays)
         vcs = {}
         vcs['safe'] = safe_index + safe_exp
     
@@ -72,7 +72,7 @@ def vc_if(command, Q, ints, arrays):
     (bot_vc, bot_ints) = vc(bot, Q, arrays)
     top_bot_vcs = merge(top_vc, bot_vc)
 
-    safe_condition = safe(condition)
+    safe_condition = safe(condition, arrays)
     vcs = {}
     vcs['safe'] = safe_condition
 
@@ -95,7 +95,7 @@ def vc_while(command, Q, ints, arrays):
         Q
     )
 
-    safe_condition = safe(condition)
+    safe_condition = safe(condition, arrays)
     vcs = {}
     vcs['commands'] = [fst_vc, snd_vc]
     vcs['safe'] = safe_condition
@@ -105,10 +105,40 @@ def vc_while(command, Q, ints, arrays):
 
     return (merge(other_vcs, vcs), ints)
 
-def safe(exp):
-    return []
+def safe(exp, arrays):
+    if isinstance(exp, IntAexp) or isinstance(exp, VarAexp):
+        return []
+
+    elif isinstance(exp, ArrayAexp):
+        safe_index = AndBexp(
+            RelopBexp('>=', exp.index, IntAexp(0)),
+            RelopBexp('<', exp.index, IntAexp(arrays[exp.name]))
+        )
+        return [safe_index]
+
+    elif isinstance(exp, BinopAexp):
+        left = safe(exp.left, arrays)
+        right = safe(exp.right, arrays)
+        safe_vcs = left + right
+
+        if exp.op == "/":
+            by_zero = RelopBexp('!=', exp.right, IntAexp(0))
+            safe_vcs.append(by_zero)
+
+        return safe_vcs
+
+    elif isinstance(exp, RelopBexp) or isinstance(exp, AndBexp) or isinstance(exp, OrBexp):
+        left = safe(exp.left, arrays)
+        right = safe(exp.right, arrays)
+        
+        return left + right
+
+    elif isinstance(exp, NotBexp):
+        not_exp = safe(exp.exp, arrays)
+        return [not_exp]
     
-    raise Exception("safe: unsupported : " + str(exp))
+    else:
+        raise Exception("safe: unsupported : " + str(exp))
 
 def merge(dict_a, dict_b):
     result = {}
