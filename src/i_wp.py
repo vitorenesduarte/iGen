@@ -66,7 +66,8 @@ def wp_if(command, Q, arrays):
     return simplify([both, safe_condition])
 
 def wp_while(command, Q, arrays):
-    return command.invariant.condition
+    inv = command.invariant.condition
+    return inv
 
 def update_value(variable, value, Q):
     if isinstance(Q, TrueBexp) or isinstance(Q, FalseBexp):
