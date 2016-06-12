@@ -12,31 +12,30 @@ class TestVC(unittest.TestCase):
     maxDiff = None
 
     @nottest
-    def program_test(self, code, expected):
+    def program_test(self, code, e_vcs, e_ints, e_arrays):
         tokens = imp_lex(code)
         result = imp_parse(tokens)
         self.assertNotEquals(None, result)
         (pre, commands, pos)  = to_triple(result.value)
         number = len(commands)
 
-        vcs = vc(commands, pos.condition)
-        self.assertEquals(expected, vcs)
+        (vcs, ints, arrays) = vc(commands, pos.condition)
+        self.assertEquals(e_vcs, vcs)
+        self.assertEquals(e_ints, ints)
+        self.assertEquals(e_arrays, arrays)
         self.assertEquals(number, len(commands))
 
     def test_no_commands(self):
         code = 'pos x > 0 end'
-        expected = []
-        self.program_test(code, expected)
+        self.program_test(code, [], set(), set())
 
     def test_assign(self):
         code = 'x := 1; pos x > 0 end'
-        expected = []
-        self.program_test(code, expected)
+        self.program_test(code, [], set(['x']), set())
 
     def test_if(self):
         code = 'if x > 0 then x := 1 else x := 2 end; pos x > 0 end'
-        expected = []
-        self.program_test(code, expected)
+        self.program_test(code, [], set(['x']), set())
 
     def test_while(self):
         code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x > 1000 end'
@@ -62,5 +61,5 @@ class TestVC(unittest.TestCase):
         )
 
         expected = [vc2, vc3]
-        self.program_test(code, expected)
+        self.program_test(code, expected, set(['x']), set())
 

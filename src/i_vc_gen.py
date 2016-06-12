@@ -11,6 +11,6 @@ def vc_gen(triple):
         wp(commands, pos.condition)
     )
 
-    vcs = vc(commands, pos.condition)
+    (vcs, ints, arrays) = vc(commands, pos.condition)
 
-    return [pre_implies_wp] + vcs
+    return ([pre_implies_wp] + vcs, ints, arrays)
