@@ -27,7 +27,10 @@ def vc(commands, Q, arrays):
 
 def vc_(commands, Q, index, ints, arrays):
     if index < 0:
-        return ({}, ints)
+        vcs = {}
+        vcs['safe'] = []
+        vcs['commands'] = []
+        return (vcs, ints)
 
     command = commands[index]
 
@@ -94,10 +97,10 @@ def vc_while(command, Q, ints, arrays):
 
     safe_condition = safe(condition)
     vcs = {}
-    vcs['while'] = [fst_vc, snd_vc]
+    vcs['commands'] = [fst_vc, snd_vc]
     vcs['safe'] = safe_condition
 
-    (other_vcs, body_ints) = vc(body, invariant)
+    (other_vcs, body_ints) = vc(body, invariant, arrays)
     ints.update([e for e in body_ints])
 
     return (merge(other_vcs, vcs), ints)
