@@ -12,15 +12,17 @@ class TestVCGen(unittest.TestCase):
     maxDiff = None
 
     @nottest
-    def program_test(self, code, expected):
+    def program_test(self, code, e_vcs, e_ints, e_arrays):
         tokens = imp_lex(code)
         result = imp_parse(tokens)
         self.assertNotEquals(None, result)
         (pre, commands, pos)  = to_triple(result.value)
         number = len(commands)
 
-        vcs = vc_gen((pre, commands, pos))
-        self.assertEquals(expected, vcs)
+        (vcs, ints, arrays) = vc_gen((pre, commands, pos))
+        self.assertEquals(e_vcs, vcs)
+        self.assertEquals(e_ints, ints)
+        self.assertEquals(e_arrays, arrays)
         self.assertEquals(number, len(commands))
 
     def test_tp(self):
@@ -52,5 +54,5 @@ class TestVCGen(unittest.TestCase):
         )
 
         expected = [vc1, vc2, vc3]
-        self.program_test(code, expected)
+        self.program_test(code, expected, set(['x']), set())
 

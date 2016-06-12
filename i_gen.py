@@ -10,22 +10,11 @@ from imp_lexer import *
 
 from i_util import *
 from i_vc_gen import *
-from i_smtlib import *
+from i_z3 import *
 
 def usage():
     sys.stderr.write('Usage: iGen filename\n')
     sys.exit(1)
-
-def write_to_file(smtlib_list):
-    with open('.smtlib', 'w') as smt_file:
-        for i in xrange(0, len(smtlib_list)):
-            smt_file.write(smtlib_list[i] + "\n")
-
-def execute():
-    command = "z3 .smtlib"
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-    output = process.communicate()[0].rstrip()
-    return output
 
 def pretty(vcs):
     pretty_vcs = []
@@ -43,8 +32,7 @@ def run_vc_gen(text):
 
     parse_result = parse_result.value
     triple = to_triple(parse_result)
-    vcs = vc_gen(triple)
-    smtlib = to_smtlib(vcs)
-    write_to_file(smtlib)
-    return (pretty(vcs), execute())
+    (vcs, ints, arrays) = vc_gen(triple)
+    (sat_or_unsat, unsat_core) = z3it("unbounded_integers", vcs, ints, arrays)
+    return (pretty(vcs), sat_or_unsat)
 

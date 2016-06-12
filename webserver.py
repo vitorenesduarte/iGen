@@ -25,7 +25,7 @@ class CORSRequestHandler (SimpleHTTPRequestHandler):
                 code = json_decoded['code']
 
                 (vcs, output) = run_vc_gen(code)
-                reply = Reply(vcs, output)
+                reply = Reply(vcs, str(output))
                 json_reply = json.dumps(reply.__dict__)
 
                 self.send_response(200)

@@ -18,5 +18,5 @@ if __name__ == '__main__':
     for i in xrange(len(vcs)):
         print vcs[i]
 
-    print "\n" + output
+    print "\n" + str(output)
 
