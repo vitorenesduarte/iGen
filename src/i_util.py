@@ -29,19 +29,19 @@ def parse_parsed_r(command, seq):
         top = command.true_stmt
         bot = command.false_stmt
 
-        topParsed = parse_parsed(top)
-        botParsed = parse_parsed(bot)
-        newIf = IfStatement(condition, topParsed, botParsed)
+        top_parsed = parse_parsed(top)
+        bot_parsed = parse_parsed(bot)
+        new_if = IfStatement(condition, top_parsed, bot_parsed)
 
-        return [newIf] + seq
+        return [new_if] + seq
 
     elif isinstance(command, WhileStatement):
         condition = command.condition
 
         (body, invariant) = extract_while_invariant(command)
-        newWhile = WhileStatement(condition, body, invariant)
+        new_while = WhileStatement(condition, body, invariant)
 
-        return [newWhile] + seq
+        return [new_while] + seq
 
     elif command == None:
         return seq

@@ -33,7 +33,21 @@ def declare_ints(tactic, ints):
     return int_decls
 
 def declare_arrays(tactic, arrays):
-    return {}
+    arrays_decls = {}
+
+    for key in arrays:
+        arrays_decls[key] = Array(key, IntSort(), IntSort())
+
+    return arrays_decls
+
+def get_index(index, int_decls):
+    if isinstance(index, VarAexp):
+        return index_decls[index.name]
+
+    if isinstance(index, IntAexp):
+        return index.i
+
+    raise Exception("get_index: unsupported " + str(index))
 
 def z3it(tactic, vcs, ints, arrays):
     solver = get_solver(tactic)
@@ -42,9 +56,9 @@ def z3it(tactic, vcs, ints, arrays):
     array_decls = declare_arrays(tactic, arrays)
 
     for i in xrange(0, len(vcs)):
-        vc = vcs[i]
+        (vc, vc_name) = vcs[i]
         vc_assert = z3fy(vc, int_decls, array_decls)
-        solver.assert_and_track(vc_assert, "vc" + str(i))
+        solver.assert_and_track(vc_assert, vc_name)
 
     return (solver.check(), solver.unsat_core())
 
@@ -60,6 +74,10 @@ def z3fy(vc, int_decls, array_decls):
 
     if isinstance(vc, VarAexp):
         return int_decls[vc.name]
+
+    if isinstance(vc, ArrayAexp):
+        z3index = z3fy(vc.index, int_decls, array_decls)
+        return array_decls[vc.name][z3index]
 
     if isinstance(vc, BinopAexp):
         left = z3fy(vc.left, int_decls, array_decls)

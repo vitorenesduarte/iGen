@@ -84,6 +84,9 @@ class ArrayAexp(Aexp):
 
     def __repr__(self):
         return '%s[%s]' % (self.name, self.index)
+    
+    def pretty(self):
+        return '%s[%s]' % (self.name, self.index)
 
 class BinopAexp(Aexp):
     def __init__(self, op, left, right):
@@ -299,4 +302,4 @@ class ArrayDeclaration:
         self.capacity = capacity
 
     def __repr__(self):
-        return 'new %s[%s]' % (self.name, self.capacity)
+        return 'new %s[%d]' % (self.name, self.capacity)

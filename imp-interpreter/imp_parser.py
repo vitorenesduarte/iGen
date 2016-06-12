@@ -34,6 +34,7 @@ def keyword(kw):
 num = Tag(INT) ^ (lambda i: int(i))
 id = Tag(ID)
 array = id + keyword('[') + (id | num) + keyword(']')
+array_decl = id + keyword('[') + num + keyword(']')
 
 # Top level parser
 def imp_parse(tokens):
@@ -75,10 +76,9 @@ def array_assign_stmt():
 
 def array_decl_stmt():
     def process(parsed):
-        (((name, _), index), _) = parsed
-        index_exp = get_index_exp(index)
-        return ArrayDeclaration(name, index_exp)
-    return array ^ process
+        (((name, _), capacity), _) = parsed
+        return ArrayDeclaration(name, capacity)
+    return array_decl ^ process
 
 def if_stmt():
     def process(parsed):

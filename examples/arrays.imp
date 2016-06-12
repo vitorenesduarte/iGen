@@ -8,8 +8,8 @@ else
   n := 4
 end;
 
-N := 10;
-n[N] := n[M];
+N := 11;
+M := 12;
 
 if n[M] > n[N] then
   n[M] := n[N]
