@@ -9,10 +9,17 @@ def wp_(commands, Q, index):
 
     command = commands[index]
 
+    if isinstance(command, ArrayDeclaration):
+        return wp_(command, Q, index - 1)
+
     if isinstance(command, AssignStatement):
         Q = wp_assign(command, Q)
         return wp_(commands, Q, index - 1)
-    
+
+    if isinstance(command, ArrayAssignStatement):
+        Q = wp_array_assign(command, Q)
+        return wp_(commands, Q, index - 1)
+
     if isinstance(command, IfStatement):
         Q = wp_if(command, Q)
         return wp_(commands, Q, index - 1)
@@ -32,20 +39,26 @@ def wp_(commands, Q, index):
     raise Exception("wp: unsupported " + str(command))
 
 def wp_assign(command, Q):
-    variable = command.name
-    value = command.aexp
-    return update_value(variable, value, Q)
+    name = command.name
+    exp = command.aexp
+    return update_value(VarAexp(name), exp, Q)
+
+def wp_array_assign(command, Q):
+    name = command.name
+    index = command.index
+    exp = command.aexp
+    return update_value(ArrayAexp(name, index), exp, Q)
 
 def wp_if(command, Q):
     condition = command.condition
     top = command.true_stmt
     bot = command.false_stmt
-    topWP = wp(top, Q)
-    botWP = wp(bot, Q)
+    top_wp = wp(top, Q)
+    bot_wp = wp(bot, Q)
 
-    leftClause = ImplBexp(condition, topWP)
-    rightClause = ImplBexp(NotBexp(condition), botWP)
-    return AndBexp(leftClause, rightClause)
+    left_clause = ImplBexp(condition, top_wp)
+    right_clause = ImplBexp(NotBexp(condition), bot_wp)
+    return AndBexp(left_clause, right_clause)
 
 def wp_while(command, Q):
     return command.invariant.condition
@@ -66,8 +79,20 @@ def update_value(variable, value, Q):
         return Q
 
     if isinstance(Q, VarAexp):
-        if Q.name == variable:
+        if isinstance(variable, VarAexp) and Q.name == variable.name:
             return value
+        else:
+            return Q
+
+    if isinstance(Q, ArrayAexp):
+        if isinstance(variable, VarAexp):
+            name = Q.name
+            index = update_value(variable, value, Q.index)
+            return ArrayAexp(name, index)
+
+        elif isinstance(variable, ArrayAexp) and Q.index == variable.index:
+            return ArrayAexp(Q.name, value)
+
         else:
             return Q
 

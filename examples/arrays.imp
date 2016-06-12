@@ -1,0 +1,20 @@
+n[10];
+n[2] := 5;
+p := n[1];
+
+if n[8] < n[9] + 1 then
+  n[9] := 5
+else
+  n := 4
+end;
+
+N := 11;
+M := 12;
+
+if n[M] > n[N] then
+  n[M] := n[N]
+else
+  N := n[M] + n[N] + 1
+end;
+
+pos n = 5 and n[M] > 3 end

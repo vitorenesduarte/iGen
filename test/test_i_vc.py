@@ -19,7 +19,7 @@ class TestVC(unittest.TestCase):
         (pre, commands, pos)  = to_triple(result.value)
         number = len(commands)
 
-        (vcs, ints, arrays) = vc(commands, pos.condition)
+        (vcs, ints, arrays) = give_me_my_vcs(commands, pos.condition)
         self.assertEquals(e_vcs, vcs)
         self.assertEquals(e_ints, ints)
         self.assertEquals(e_arrays, arrays)
@@ -27,15 +27,18 @@ class TestVC(unittest.TestCase):
 
     def test_no_commands(self):
         code = 'pos x > 0 end'
-        self.program_test(code, [], set(), set())
+        expected = {'commands': [], 'safe': []}
+        self.program_test(code, expected, set(), {})
 
     def test_assign(self):
         code = 'x := 1; pos x > 0 end'
-        self.program_test(code, [], set(['x']), set())
+        expected = {'commands': [], 'safe': []}
+        self.program_test(code, expected, set(['x']), {})
 
     def test_if(self):
         code = 'if x > 0 then x := 1 else x := 2 end; pos x > 0 end'
-        self.program_test(code, [], set(['x']), set())
+        expected = {'commands': [], 'safe': []}
+        self.program_test(code, expected, set(['x']), {})
 
     def test_while(self):
         code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x > 1000 end'
@@ -60,6 +63,6 @@ class TestVC(unittest.TestCase):
             pos
         )
 
-        expected = [vc2, vc3]
-        self.program_test(code, expected, set(['x']), set())
+        expected = {'commands': [vc2, vc3], 'safe': []}
+        self.program_test(code, expected, set(['x']), {})
 

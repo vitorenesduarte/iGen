@@ -77,6 +77,17 @@ class VarAexp(Aexp):
         else:
             return 0
 
+class ArrayAexp(Aexp):
+    def __init__(self, name, index):
+        self.name = name
+        self.index = index
+
+    def __repr__(self):
+        return '%s[%s]' % (self.name, self.index)
+    
+    def pretty(self):
+        return '%s[%s]' % (self.name, self.index)
+
 class BinopAexp(Aexp):
     def __init__(self, op, left, right):
         self.op = op
@@ -204,6 +215,16 @@ class AssignStatement(Statement):
         value = self.aexp.eval(env)
         env[self.name] = value
 
+class ArrayAssignStatement(Statement):
+    def __init__(self, name, index, aexp):
+        self.name = name
+        self.index = index
+        self.aexp = aexp
+
+    def __repr__(self):
+        return '(:= %s[%s] %s)' % (self.name, self.index, self.aexp)
+
+
 class CompoundStatement(Statement):
     def __init__(self, first, second):
         self.first = first
@@ -274,3 +295,11 @@ class AssumeStatement(VCStatement):
 class AssertStatement(VCStatement):
     def __repr__(self):
         return '(assert %s)' % (self.condition)
+
+class ArrayDeclaration:
+    def __init__(self, name, capacity):
+        self.name = name
+        self.capacity = capacity
+
+    def __repr__(self):
+        return 'new %s[%d]' % (self.name, self.capacity)

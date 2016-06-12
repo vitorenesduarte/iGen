@@ -20,7 +20,8 @@ def pretty(vcs):
     pretty_vcs = []
 
     for i in xrange(len(vcs)):
-        pretty_vcs.append(vcs[i].pretty())
+        (vc, vc_name) = vcs[i]
+        pretty_vcs.append(vc.pretty())
 
     return pretty_vcs
 
@@ -31,8 +32,9 @@ def run_vc_gen(text):
         return "Parse error"
 
     parse_result = parse_result.value
+    print parse_result
     triple = to_triple(parse_result)
     (vcs, ints, arrays) = vc_gen(triple)
-    (sat_or_unsat, unsat_core) = z3it("unbounded_integers", vcs, ints, arrays)
-    return (pretty(vcs), sat_or_unsat)
-
+    result = z3it("unbounded_integers", vcs, ints, arrays)
+    (sat_or_unsat, unsat_core) = result
+    return (pretty(vcs), sat_or_unsat, unsat_core)

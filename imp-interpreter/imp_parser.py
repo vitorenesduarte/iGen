@@ -33,6 +33,8 @@ def keyword(kw):
 
 num = Tag(INT) ^ (lambda i: int(i))
 id = Tag(ID)
+array = id + keyword('[') + (id | num) + keyword(']')
+array_decl = id + keyword('[') + num + keyword(']')
 
 # Top level parser
 def imp_parse(tokens):
@@ -48,13 +50,15 @@ def stmt_list():
     return Exp(stmt(), separator)
 
 def stmt():
-    return assign_stmt() | \
-           if_stmt()     | \
-           while_stmt()  | \
-           pre_stmt()    | \
-           pos_stmt()    | \
-           inv_stmt()    | \
-           assume_stmt() | \
+    return assign_stmt()           | \
+           array_assign_stmt()     | \
+           array_decl_stmt()       | \
+           if_stmt()               | \
+           while_stmt()            | \
+           pre_stmt()              | \
+           pos_stmt()              | \
+           inv_stmt()              | \
+           assume_stmt()           | \
            assert_stmt()
 
 def assign_stmt():
@@ -62,6 +66,19 @@ def assign_stmt():
         ((name, _), exp) = parsed
         return AssignStatement(name, exp)
     return id + keyword(':=') + aexp() ^ process
+
+def array_assign_stmt():
+    def process(parsed):
+        (((((name, _), index), _), _), exp) = parsed
+        index_exp = get_index_exp(index)
+        return ArrayAssignStatement(name, index_exp, exp)
+    return array + keyword(':=') + aexp() ^ process
+
+def array_decl_stmt():
+    def process(parsed):
+        (((name, _), capacity), _) = parsed
+        return ArrayDeclaration(name, capacity)
+    return array_decl ^ process
 
 def if_stmt():
     def process(parsed):
@@ -149,6 +166,7 @@ def aexp_group():
            
 def aexp_value():
     return (num ^ (lambda i: IntAexp(i))) | \
+           (array ^ process_array)        | \
            (id  ^ (lambda v: VarAexp(v)))
 
 # An IMP-specific combinator for binary operator expressions (aexp and bexp)
@@ -180,10 +198,24 @@ def process_group(parsed):
     ((_, p), _) = parsed
     return p
 
+def process_array(parsed):
+    (((name, _), index), _) = parsed
+    index_exp = get_index_exp(index)
+    return ArrayAexp(name, index_exp)
+
 def any_operator_in_list(ops):
     op_parsers = [keyword(op) for op in ops]
     parser = reduce(lambda l, r: l | r, op_parsers)
     return parser
+
+def get_index_exp(index):
+    if isinstance(index, int):
+        return IntAexp(index)
+
+    if isinstance(index, basestring):
+        return VarAexp(index)
+
+    raise Exception("get_index_exp: unsupported " + str(index))
 
 # Operator keywords and precedence levels
 aexp_precedence_levels = [
