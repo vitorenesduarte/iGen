@@ -54,11 +54,6 @@ def vc_while(command, Q, ints, arrays):
     body = command.body
     invariant = command.invariant.condition
 
-    safe_condition = safe(condition, arrays)
-    safe_vc = ImplBexp(
-        invariant,
-        safe_condition
-    )
     fst_vc = ImplBexp(
         AndBexp(invariant, condition),
         wp(body, invariant, arrays)
@@ -68,14 +63,7 @@ def vc_while(command, Q, ints, arrays):
         Q
     )
 
-    some_vcs = []
-    if safe_condition != TrueBexp():
-        some_vcs.append(safe_vc)
-
-    some_vcs.append(fst_vc)
-    some_vcs.append(snd_vc)
-
     (other_vcs, body_ints) = vc(body, invariant, arrays)
     ints.update([e for e in body_ints])
 
-    return (some_vcs + other_vcs, ints)
+    return ([fst_vc, snd_vc] + other_vcs, ints)
