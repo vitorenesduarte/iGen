@@ -23,7 +23,6 @@ def vc_gen(triple):
     )
 
     (vcs, ints) = vc(commands, pos.condition, arrays)
-    print ints
 
     return ([pre_implies_wp] + vcs, ints, arrays)
 

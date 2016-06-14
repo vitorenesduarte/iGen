@@ -21,8 +21,6 @@ class TestZ3(unittest.TestCase):
         (vcs, ints, arrays) = vc_gen(triple)
         number = len(vcs)
 
-        print ints
-
         (result1, _) = z3it("unbounded_integers", vcs, ints, arrays)
         (result2, _) = z3it("bit_vectors", vcs, ints, arrays)
 
@@ -31,6 +29,6 @@ class TestZ3(unittest.TestCase):
         self.assertEquals(number, len(vcs))
 
     def test_tp(self):
-        code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x > 1000 end'
-        self.program_test(code, "sat")
+        code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x = 1000 end'
+        self.program_test(code, "unsat")
 

@@ -44,7 +44,7 @@ class TestVC(unittest.TestCase):
         self.program_test(code, expected, set(['x']), {})
 
     def test_while(self):
-        code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x > 1000 end'
+        code = 'pre x > 100 end; while x < 1000 do inv 100 < x and x <= 1000 end; x := x + 1 end; pos x = 1000 end'
         invariant = AndBexp(
             RelopBexp('<', IntAexp(100), VarAexp('x')),
             RelopBexp('<=', VarAexp('x'), IntAexp(1000))
@@ -55,7 +55,7 @@ class TestVC(unittest.TestCase):
             RelopBexp('<', IntAexp(100), x_plus_one),
             RelopBexp('<=', x_plus_one, IntAexp(1000))
         )
-        pos = RelopBexp('>', VarAexp('x'), IntAexp(1000))
+        pos = RelopBexp('=', VarAexp('x'), IntAexp(1000))
 
         vc2 = ImplBexp(
             AndBexp(invariant, condition),
