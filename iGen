@@ -13,12 +13,12 @@ if __name__ == '__main__':
         usage()
     filename = sys.argv[1]
     text = open(filename).read()
-    result = run_vc_gen(text)
-    (vcs, sat_or_unsat, unsat_core) = result
+    result = run_vc_gen(text, "unbounded_integers")
 
-    for i in xrange(len(vcs)):
-        print vcs[i]
-
-    print "\n" + str(sat_or_unsat)
-    print "\n" + str(unsat_core)
+    for i in xrange(len(result)):
+        print ""
+        (vc, sat_or_unsat, model_or_unsat_core) = result[i]
+        print vc
+        print sat_or_unsat
+        print model_or_unsat_core
 
