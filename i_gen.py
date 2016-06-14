@@ -16,12 +16,18 @@ def usage():
     sys.stderr.write('Usage: iGen filename\n')
     sys.exit(1)
 
+def to_valid_or_unknown(sat_or_unsat):
+    if sat_or_unsat == "sat":
+        return "valid"
+    else:
+        return "unknown"
+
 def pretty(result):
     result_str = []
 
     for i in xrange(len(result)):
         (vc, sat_or_unsat, model_or_unsat_core) = result[i]
-        vc_str = (vc.pretty(), str(sat_or_unsat), str(model_or_unsat_core))
+        vc_str = (vc.pretty(), to_valid_or_unknown(str(sat_or_unsat)), str(model_or_unsat_core))
         result_str.append(vc_str)
 
     return result_str
