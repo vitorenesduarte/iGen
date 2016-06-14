@@ -17,7 +17,7 @@ def usage():
     sys.exit(1)
 
 def to_valid_or_unknown(sat_or_unsat):
-    if sat_or_unsat == "sat":
+    if sat_or_unsat == "unsat":
         return "valid"
     else:
         return "unknown"
