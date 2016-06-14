@@ -16,15 +16,17 @@ def usage():
     sys.stderr.write('Usage: iGen filename\n')
     sys.exit(1)
 
-def pretty(vcs):
-    pretty_vcs = []
+def pretty(result):
+    result_str = []
 
-    for i in xrange(len(vcs)):
-        pretty_vcs.append(vcs[i].pretty())
+    for i in xrange(len(result)):
+        (vc, sat_or_unsat, model_or_unsat_core) = result[i]
+        vc_str = (vc.pretty(), str(sat_or_unsat), str(model_or_unsat_core))
+        result_str.append(vc_str)
 
-    return pretty_vcs
+    return result_str
 
-def run_vc_gen(text):
+def run_vc_gen(text, theory):
     tokens = imp_lex(text)
     parse_result = imp_parse(tokens)
     if not parse_result:
@@ -33,6 +35,5 @@ def run_vc_gen(text):
     parse_result = parse_result.value
     triple = to_triple(parse_result)
     (vcs, ints, arrays) = vc_gen(triple)
-    result = z3it("unbounded_integers", vcs, ints, arrays)
-    (sat_or_unsat, unsat_core) = result
-    return (pretty(vcs), sat_or_unsat, unsat_core)
+    result = z3it(theory, vcs, ints, arrays)
+    return pretty(result)

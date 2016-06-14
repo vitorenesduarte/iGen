@@ -1,3 +1,6 @@
 a[10];
 M := 11;
-a[M] := 1
+
+while a[M] > 1 do
+  x := x + 1
+end

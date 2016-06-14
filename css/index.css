@@ -1,3 +1,8 @@
+body {
+  background-color: #e67e22;
+  color: #111111;
+}
+
 .col-center-block {
   float: none;
   display: block;
@@ -5,15 +10,25 @@
   margin-right: auto;
 }
 
-.green-title {
-  color: #00bc8c;
-}
-
 .green-text-area {
   resize: vertical;
 }
 
+.i-center-text {
+  text-align: center;
+}
+
+.igen-title {
+  font-size: 400%;
+}
+
+.run-btn {
+  background-color: #111111;
+  color: white;
+}
+
 #output-div {
+  margin-top: 10px;
   display: none;
 }
 

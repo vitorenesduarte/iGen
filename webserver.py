@@ -8,9 +8,14 @@ import simplejson
 import json
 
 class Reply:
-    def __init__(self, vcs, result):
+    def __init__(self, vc, sat_or_unsat, model_or_unsat_core):
+        self.vc = vc
+        self.sat_or_unsat = sat_or_unsat
+        self.model_or_unsat_core = model_or_unsat_core
+
+class Replies:
+    def __init__(self, vcs):
         self.vcs = vcs
-        self.result = result
 
 class CORSRequestHandler (SimpleHTTPRequestHandler):
     def end_headers (self):
@@ -23,15 +28,24 @@ class CORSRequestHandler (SimpleHTTPRequestHandler):
                 json_string = self.rfile.read(int(self.headers['Content-Length']))
                 json_decoded = simplejson.loads(json_string)
                 code = json_decoded['code']
+                theory = json_decoded['theory']
 
-                (vcs, sat_or_unsat, unsat_core) = run_vc_gen(code)
-                reply = Reply(vcs, str(sat_or_unsat))
-                json_reply = json.dumps(reply.__dict__)
+                result = run_vc_gen(code, theory)
+                vcs = []
+
+                for i in xrange(len(result)):
+                    (vc, sat_or_unsat, model_or_unsat_core) = result[i]
+                    reply = Reply(vc, sat_or_unsat, model_or_unsat_core)
+                    json_reply = json.dumps(reply.__dict__)
+                    vcs.append(json_reply)
+
+                replies = Replies(vcs)
+                json_replies = json.dumps(replies.__dict__)
 
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
-                self.wfile.write(json_reply)
+                self.wfile.write(json_replies)
             else:
                 self.send_response(200)
                 self.end_headers()

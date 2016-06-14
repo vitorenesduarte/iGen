@@ -3,7 +3,7 @@ from z3 import *
 
 UI = "unbounded_integers"
 BV = "bit_vectors"
-BV_BITS = 16
+BV_BITS = 32
 
 def get_solver(tactic):
     if tactic == UI:
@@ -59,8 +59,6 @@ def merge(vcs):
     return result
 
 def z3it(tactic, vcs, ints, arrays):
-    solver = get_solver(tactic)
-    solver.set(unsat_core = True)
     int_decls = declare_ints(tactic, ints)
     array_decls = declare_arrays(tactic, arrays)
 
@@ -68,18 +66,26 @@ def z3it(tactic, vcs, ints, arrays):
     #unique_vc_z3 = z3fy(unique_vc, int_decls, array_decls)
     #solver.assert_and_track(Not(unique_vc_z3), "unique")
 
+    result = []
+
     for i in xrange(0, len(vcs)):
         vc = vcs[i]
         vc_assert = z3fy(vc, int_decls, array_decls)
+
+        solver = get_solver(tactic)
+        solver.set(unsat_core = True)
         solver.assert_and_track(Not(vc_assert), "vc_" + str(i))
 
-    result = solver.check()
-    if str(result) == "sat":
-        model_or_unsat_core = solver.model()
-    else:
-        model_or_unsat_core = solver.unsat_core()
+        sat_or_unsat = solver.check()
+        if str(sat_or_unsat) == "sat":
+            model_or_unsat_core = solver.model()
+        else:
+            model_or_unsat_core = solver.unsat_core()
 
-    return (result, model_or_unsat_core)
+        vc_result = (vc, sat_or_unsat, model_or_unsat_core)
+        result.append(vc_result)
+
+    return result
 
 def z3fy(vc, int_decls, array_decls):
     if isinstance(vc, TrueBexp):
