@@ -288,14 +288,6 @@ class InvStatement(VCStatement):
     def __repr__(self):
         return '(inv %s)' % (self.condition)
 
-class AssumeStatement(VCStatement):
-    def __repr__(self):
-        return '(assume %s)' % (self.condition)
-
-class AssertStatement(VCStatement):
-    def __repr__(self):
-        return '(assert %s)' % (self.condition)
-
 class ArrayDeclaration:
     def __init__(self, name, capacity):
         self.name = name

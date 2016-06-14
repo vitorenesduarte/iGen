@@ -53,10 +53,6 @@ class TestVCGen(unittest.TestCase):
             pos
         )
 
-        expected = [
-            (vc2, 'commands_0'),
-            (vc3, 'commands_1'),
-            (vc1, 'pre_implies_wp_0')
-        ]
+        expected = [vc1, vc2, vc3]
         self.program_test(code, expected, set(['x']), {})
 

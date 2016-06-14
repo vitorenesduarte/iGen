@@ -96,8 +96,9 @@ class TestWP(unittest.TestCase):
         self.assertNotEquals(None, result)
         (pre, commands, pos)  = to_triple(result.value)
         number = len(commands)
+        arrays = {}
 
-        weakest = wp(commands, pos.condition)
+        weakest = wp(commands, pos.condition, arrays)
         self.assertEquals(expected, weakest)
         self.assertEquals(number, len(commands))
 
@@ -139,17 +140,3 @@ class TestWP(unittest.TestCase):
         code = 'while x > 0 do inv x >= 0 end; x := x + 1 end; x := 2; y := x + 1; pos x > 0 and y > 0 end'
         expected = RelopBexp('>=', VarAexp('x'), IntAexp(0))
         self.program_test(code, expected)
-
-    def test_assume(self):
-        code = 'assume x > 3 end; pos x > 0 end'
-        expected = ImplBexp(
-            RelopBexp('>', VarAexp('x'), IntAexp(3)),
-            RelopBexp('>', VarAexp('x'), IntAexp(0))
-        )
-        self.program_test(code, expected)
-
-    def test_assert(self):
-        code = 'x := 1; assert x > 0 end'
-        expected = AndBexp(RelopBexp('>', IntAexp(1), IntAexp(0)), TrueBexp())
-        self.program_test(code, expected)
-

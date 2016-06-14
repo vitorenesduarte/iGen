@@ -1,75 +1,74 @@
 from imp_ast import *
 
-def wp(commands, Q):
-    return wp_(commands, Q, len(commands) - 1)
+def wp(commands, Q, arrays):
+    return wp_(commands, Q, len(commands) - 1, arrays)
 
-def wp_(commands, Q, index):
+def wp_(commands, Q, index, arrays):
     if index < 0:
         return Q
 
     command = commands[index]
 
     if isinstance(command, ArrayDeclaration):
-        return wp_(command, Q, index - 1)
+        return wp_(command, Q, index - 1, arrays)
 
     if isinstance(command, AssignStatement):
-        Q = wp_assign(command, Q)
-        return wp_(commands, Q, index - 1)
+        Q = wp_assign(command, Q, arrays)
+        return wp_(commands, Q, index - 1, arrays)
 
     if isinstance(command, ArrayAssignStatement):
-        Q = wp_array_assign(command, Q)
-        return wp_(commands, Q, index - 1)
+        Q = wp_array_assign(command, Q, arrays)
+        return wp_(commands, Q, index - 1, arrays)
 
     if isinstance(command, IfStatement):
-        Q = wp_if(command, Q)
-        return wp_(commands, Q, index - 1)
+        Q = wp_if(command, Q, arrays)
+        return wp_(commands, Q, index - 1, arrays)
 
     if isinstance(command, WhileStatement):
-        Q = wp_while(command, Q)
-        return wp_(commands, Q, index - 1)
-
-    if isinstance(command, AssumeStatement):
-        Q = wp_assume(command, Q)
-        return wp_(commands, Q, index - 1)
-
-    if isinstance(command, AssertStatement):
-        Q = wp_assert(command, Q)
-        return wp_(commands, Q, index - 1)
+        Q = wp_while(command, Q, arrays)
+        return wp_(commands, Q, index - 1, arrays)
 
     raise Exception("wp: unsupported " + str(command))
 
-def wp_assign(command, Q):
+def wp_assign(command, Q, arrays):
     name = command.name
     exp = command.aexp
-    return update_value(VarAexp(name), exp, Q)
+    replaced = update_value(VarAexp(name), exp, Q)
 
-def wp_array_assign(command, Q):
+    safe_exp = safe(command.aexp, arrays)
+
+    return simplify([replaced, safe_exp])
+
+def wp_array_assign(command, Q, arrays):
     name = command.name
     index = command.index
     exp = command.aexp
-    return update_value(ArrayAexp(name, index), exp, Q)
+    replaced = update_value(ArrayAexp(name, index), exp, Q)
 
-def wp_if(command, Q):
+    safe_index = safe(ArrayAexp(name, index), arrays)
+    safe_exp = safe(exp, arrays)
+
+    return simplify([replaced, safe_index, safe_exp])
+
+def wp_if(command, Q, arrays):
     condition = command.condition
     top = command.true_stmt
     bot = command.false_stmt
-    top_wp = wp(top, Q)
-    bot_wp = wp(bot, Q)
+    top_wp = wp(top, Q, arrays)
+    bot_wp = wp(bot, Q, arrays)
 
     left_clause = ImplBexp(condition, top_wp)
     right_clause = ImplBexp(NotBexp(condition), bot_wp)
-    return AndBexp(left_clause, right_clause)
+    both = AndBexp(left_clause, right_clause)
 
-def wp_while(command, Q):
-    return command.invariant.condition
+    safe_condition = safe(condition, arrays)
 
-def wp_assume(command, Q):
-    P = command.condition
-    return ImplBexp(P, Q)
+    return simplify([both, safe_condition])
 
-def wp_assert(command, Q):
-    P = command.condition
-    return AndBexp(P, Q)
+def wp_while(command, Q, arrays):
+    safe_condition = safe(command.condition, arrays)
+    inv = command.invariant.condition
+    return simplify([safe_condition, inv])
 
 def update_value(variable, value, Q):
     if isinstance(Q, TrueBexp) or isinstance(Q, FalseBexp):
@@ -128,3 +127,52 @@ def update_value(variable, value, Q):
         return NotBexp(exp)
 
     raise Exception("update_value: unsupported " + str(Q))
+
+def safe(exp, arrays):
+    if isinstance(exp, IntAexp) or isinstance(exp, VarAexp):
+        return TrueBexp()
+
+    elif isinstance(exp, ArrayAexp):
+        safe_index = AndBexp(
+            RelopBexp('>=', exp.index, IntAexp(0)),
+            RelopBexp('<', exp.index, IntAexp(arrays[exp.name]))
+        )
+        return safe_index
+
+    elif isinstance(exp, BinopAexp):
+        left = safe(exp.left, arrays)
+        right = safe(exp.right, arrays)
+        by_zero = TrueBexp()
+
+        if exp.op == "/":
+            by_zero = RelopBexp('!=', exp.right, IntAexp(0))
+
+        return simplify([left, right, by_zero])
+
+    elif isinstance(exp, RelopBexp) or isinstance(exp, AndBexp) or isinstance(exp, OrBexp):
+        left = safe(exp.left, arrays)
+        right = safe(exp.right, arrays)
+        
+        return simplify([left, right])
+
+    elif isinstance(exp, NotBexp):
+        not_exp = safe(exp.exp, arrays)
+        return not_exp
+    
+    else:
+        raise Exception("safe: unsupported : " + str(exp))
+
+def simplify(l):
+    l_no_true = []
+    for i in xrange(len(l)):
+        if l[i] != TrueBexp():
+            l_no_true.append(l[i])
+
+    if len(l_no_true) == 0:
+        return TrueBexp()
+    else:
+        result = l_no_true[0]
+        for i in xrange(1, len(l_no_true)):
+            result = AndBexp(result, l[i])
+
+        return result

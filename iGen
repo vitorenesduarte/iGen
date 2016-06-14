@@ -20,4 +20,5 @@ if __name__ == '__main__':
         print vcs[i]
 
     print "\n" + str(sat_or_unsat)
+    print "\n" + str(unsat_core)
 
