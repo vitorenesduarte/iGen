@@ -20,7 +20,7 @@ class TestVC(unittest.TestCase):
         number = len(commands)
 
         arrays = {}
-        result = vc(commands, pos.condition, arrays)
+        result = vc(commands, pos.condition, set(), arrays)
         print result
         (vcs, ints) = result
         self.assertEquals(e_vcs, vcs)

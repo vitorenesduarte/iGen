@@ -12,7 +12,7 @@ $('#run').on('click', function(e) {
 
 function run(theory) {
 
-  $('#output-div').slideUp('fast');
+  $('#output-div').hide();
 
   var code = $('#code').val();
   var data = { code : code, theory : theory };
