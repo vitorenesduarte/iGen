@@ -1,0 +1,9 @@
+pre x  > 0 end;
+
+if x > 0 then
+  y := 10
+else
+  y := 11
+end;
+
+pos y = 10 end

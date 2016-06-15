@@ -7,8 +7,8 @@ def get_capacity(name, arrays):
 
     raise Exception("get_capacity: undeclared array " + str(name))
 
-def vc(commands, Q, arrays):
-    return vc_(commands, Q, len(commands) - 1, set(), arrays)
+def vc(commands, Q, ints, arrays):
+    return vc_(commands, Q, len(commands) - 1, ints, arrays)
 
 def vc_(commands, Q, index, ints, arrays):
     if index < 0:
@@ -41,8 +41,8 @@ def vc_if(command, Q, ints, arrays):
     top = command.true_stmt
     bot = command.false_stmt
 
-    (top_vc, top_ints) = vc(top, Q, arrays)
-    (bot_vc, bot_ints) = vc(bot, Q, arrays)
+    (top_vc, top_ints) = vc(top, Q, ints, arrays)
+    (bot_vc, bot_ints) = vc(bot, Q, ints, arrays)
 
     ints.update([e for e in top_ints])
     ints.update([e for e in bot_ints])
@@ -75,7 +75,7 @@ def vc_while(command, Q, ints, arrays):
     while_vcs.append(fst_vc)
     while_vcs.append(snd_vc)
 
-    (other_vcs, body_ints) = vc(body, invariant, arrays)
+    (other_vcs, body_ints) = vc(body, invariant, ints, arrays)
     ints.update([e for e in body_ints])
 
     return (while_vcs + other_vcs, ints)
