@@ -10,7 +10,7 @@ def wp_(commands, Q, index, arrays):
     command = commands[index]
 
     if isinstance(command, ArrayDeclaration):
-        return wp_(command, Q, index - 1, arrays)
+        return wp_(commands, Q, index - 1, arrays)
 
     if isinstance(command, AssignStatement):
         Q = wp_assign(command, Q, arrays)
